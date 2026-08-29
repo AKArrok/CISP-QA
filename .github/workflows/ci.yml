@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      # 静态检查（全仓无用 import / 未定义名）
+      - name: Lint
+        run: |
+          pip install pyflakes
+          python -m pyflakes *.py data_ingest/*.py retrieval/*.py agents/*.py quiz/*.py tests/test_*.py
+
+      # 单元测试（fixtures 层不依赖本地 data/ 与 API key）
+      - name: Install test deps
+        run: pip install python-dotenv pydantic jieba
+
+      - name: Unit tests
+        run: python -m pytest tests/test_parsers.py tests/test_grader.py tests/test_memory.py -q
+
+      # 模块可导入冒烟（缺数据/缺 key 时的失败要给出明确信息而不是 ImportError）
+      - name: Import smoke
+        run: |
+          python -c "import config; import domains"
+          python -c "from data_ingest import manifest"
+          python -c "from quiz import store, stats"
+          python -c "from agents import memory"

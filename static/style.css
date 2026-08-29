@@ -1,0 +1,107 @@
+:root {
+  --primary: #1a5fb4;
+  --bg: #f4f6f9;
+  --card: #ffffff;
+  --text: #24292f;
+  --muted: #6a737d;
+  --ok: #1a7f37;
+  --bad: #c62828;
+  --border: #d8dee4;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  background: var(--bg); color: var(--text);
+  max-width: 860px; margin: 0 auto; padding: 0 16px 40px;
+}
+header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 0;
+}
+header h1 { font-size: 20px; }
+.tab {
+  border: 1px solid var(--border); background: var(--card);
+  padding: 8px 22px; font-size: 15px; cursor: pointer; border-radius: 8px 8px 0 0;
+}
+.tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.hidden { display: none !important; }
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px; margin-top: 14px;
+}
+
+/* ── 问答 ── */
+#chat-history {
+  height: calc(100vh - 210px); min-height: 380px; overflow-y: auto;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px;
+}
+.bubble {
+  max-width: 86%; padding: 10px 14px; border-radius: 12px;
+  margin-bottom: 12px; line-height: 1.65; white-space: pre-wrap; word-break: break-word;
+}
+.bubble.user { background: var(--primary); color: #fff; margin-left: auto; }
+.bubble.bot { background: #eef2f7; }
+.bubble .ctx {
+  margin-top: 8px; font-size: 12px; color: var(--muted);
+  border-top: 1px dashed var(--border); padding-top: 6px;
+}
+.chat-input-bar { display: flex; gap: 8px; margin-top: 12px; }
+#chat-input {
+  flex: 1; padding: 11px 14px; font-size: 15px;
+  border: 1px solid var(--border); border-radius: 8px;
+}
+#chat-send {
+  padding: 11px 26px; background: var(--primary); color: #fff;
+  border: none; border-radius: 8px; cursor: pointer; font-size: 15px;
+}
+#chat-send:disabled { opacity: .5; cursor: wait; }
+
+/* ── 刷题 ── */
+.quiz-controls { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+.quiz-controls label { font-size: 14px; color: var(--muted); }
+.quiz-controls select {
+  margin-left: 6px; padding: 7px 10px; border: 1px solid var(--border);
+  border-radius: 6px; font-size: 14px;
+}
+#quiz-next {
+  margin-left: auto; padding: 9px 22px; background: var(--primary); color: #fff;
+  border: none; border-radius: 8px; cursor: pointer; font-size: 14px;
+}
+.badge {
+  display: inline-block; background: #e5ecf6; color: var(--primary);
+  border-radius: 10px; padding: 2px 10px; font-size: 12px; margin-right: 8px;
+}
+.badge.muted { background: #f0f1f2; color: var(--muted); }
+#q-stem { margin: 12px 0; line-height: 1.7; }
+.option {
+  display: block; padding: 10px 14px; margin: 8px 0; cursor: pointer;
+  border: 1px solid var(--border); border-radius: 8px; line-height: 1.5;
+}
+.option:hover { border-color: var(--primary); }
+.option.chosen { border-color: var(--primary); background: #eaf1fb; }
+.option.right { border-color: var(--ok); background: #e9f5ec; }
+.option.wrong { border-color: var(--bad); background: #fbeaea; }
+.option.locked { cursor: default; }
+#q-verdict { font-weight: 700; margin: 12px 0 6px; }
+#q-verdict.ok { color: var(--ok); }
+#q-verdict.bad { color: var(--bad); }
+#q-analysis {
+  background: #f7f8fa; border-left: 3px solid var(--primary);
+  padding: 10px 12px; line-height: 1.6; font-size: 14px;
+}
+#q-related-box { margin-top: 10px; font-size: 13px; color: var(--muted); }
+#q-related { padding: 8px 0; }
+#q-related .rel { border-top: 1px dashed var(--border); padding: 8px 0; line-height: 1.6; }
+
+/* ── 统计 ── */
+#stats-summary { font-size: 14px; color: var(--muted); margin-bottom: 10px; }
+#stats-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+#stats-table th, #stats-table td {
+  text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border);
+}
+#stats-table .weak { color: var(--bad); font-weight: 700; }
+.bar {
+  display: inline-block; height: 10px; background: var(--primary);
+  border-radius: 5px; vertical-align: middle; margin-right: 8px;
+}

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CISP 备考助手</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>🛡️ CISP 备考助手</h1>
+  <nav>
+    <button id="tab-chat" class="tab active">问答</button>
+    <button id="tab-quiz" class="tab">刷题</button>
+  </nav>
+</header>
+
+<!-- ═══════════ 问答页签 ═══════════ -->
+<main id="chat-panel">
+  <div id="chat-history"></div>
+  <div class="chat-input-bar">
+    <input id="chat-input" type="text" placeholder="输入问题，如：什么是深度防御？"
+           autocomplete="off">
+    <button id="chat-send">发送</button>
+  </div>
+</main>
+
+<!-- ═══════════ 刷题页签 ═══════════ -->
+<main id="quiz-panel" class="hidden">
+  <section class="quiz-controls card">
+    <label>出题模式
+      <select id="quiz-mode">
+        <option value="random">随机练习</option>
+        <option value="weak">薄弱强化</option>
+      </select>
+    </label>
+    <label>知识域
+      <select id="quiz-domain"><option value="">全部</option></select>
+    </label>
+    <button id="quiz-next">出一题</button>
+  </section>
+
+  <section id="quiz-question" class="card hidden">
+    <div class="q-meta">
+      <span id="q-domain" class="badge"></span>
+      <span id="q-source" class="badge muted"></span>
+    </div>
+    <div id="q-stem"></div>
+    <div id="q-options"></div>
+    <div id="q-feedback" class="hidden">
+      <div id="q-verdict"></div>
+      <div id="q-analysis"></div>
+      <details id="q-related-box"><summary>关联课件原文</summary><div id="q-related"></div></details>
+    </div>
+  </section>
+
+  <section id="quiz-stats" class="card">
+    <h3>📊 薄弱点画像</h3>
+    <div id="stats-summary"></div>
+    <table id="stats-table">
+      <thead><tr><th>知识域</th><th>答题数</th><th>正确率</th><th>状态</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
