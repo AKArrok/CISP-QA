@@ -37,17 +37,21 @@ EVAL_SET = [
 
 def main() -> None:
     retriever = HybridRetriever.get()
-    hits = 0
+    hits_top1 = hits_top5 = 0
     for question, expected in EVAL_SET:
         results = retriever.retrieve(question, top_k=5)
         got_domains = [r["domain"] for r in results]
-        ok = expected in got_domains
-        hits += ok
-        mark = "✅" if ok else "❌"
-        print(f"{mark} [{expected}] {question}")
-        if not ok:
+        ok5 = expected in got_domains
+        ok1 = bool(got_domains) and got_domains[0] == expected
+        hits_top5 += ok5
+        hits_top1 += ok1
+        mark = "✅" if ok5 else "❌"
+        flag = "" if ok1 or not ok5 else "  (top5命中但top1偏差)"
+        print(f"{mark} [{expected}] {question}{flag}")
+        if not ok5:
             print(f"   实际: {got_domains}")
-    print(f"\n命中 {hits}/{len(EVAL_SET)}")
+    print(f"\ntop5 知识域命中: {hits_top5}/{len(EVAL_SET)}")
+    print(f"top1 知识域命中: {hits_top1}/{len(EVAL_SET)}  ← 精排主要改善该指标")
 
 
 if __name__ == "__main__":

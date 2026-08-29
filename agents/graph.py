@@ -131,7 +131,12 @@ async def answer(state: AgentState) -> dict:
             contexts=context_text, question=state["question"]) + history_text),
     ]
     resp = await llm_ainvoke_retry(llm, messages)
-    return {"messages": [resp], "answer": str(resp.content)}
+    usage_meta = getattr(resp, "usage_metadata", None) or {}
+    usage = {
+        "prompt_tokens": usage_meta.get("input_tokens", 0),
+        "completion_tokens": usage_meta.get("output_tokens", 0),
+    }
+    return {"messages": [resp], "answer": str(resp.content), "usage": usage}
 
 
 async def llm_ainvoke_retry(llm, messages):

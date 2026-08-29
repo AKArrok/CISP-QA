@@ -85,6 +85,10 @@ class HybridRetriever:
                 for c in extra[:top_k - len(full)]:
                     chunk = self._chunks_by_id[c["id"]]
                     full.append({**chunk, "score": c.get("score", 0.0)})
+        # 精排：对过滤后的候选交叉编码重排序（失败自动降级为原顺序）
+        if config.ENABLE_RERANKING:
+            from retrieval.reranker import rerank
+            full = rerank(query, full[:config.RERANK_TOP_K], top_k)
         return full[:top_k]
 
 

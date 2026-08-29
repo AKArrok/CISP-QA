@@ -22,3 +22,5 @@ class AgentState(TypedDict):
     contexts: list[dict]
     # 最终回答
     answer: str
+    # 回答 LLM 的 Token 用量（可观测性）
+    usage: dict

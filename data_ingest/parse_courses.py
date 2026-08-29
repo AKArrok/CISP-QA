@@ -63,7 +63,7 @@ def parse_pdf(path: str, kind: str, max_chars: int) -> list[dict]:
         text = _clean(page.get_text())
         if len(text) < 10:
             continue
-        for i, part in enumerate(_split_long(text, max_chars)):
+        for part in _split_long(text, max_chars):
             chunks.append({
                 "domain": domain,
                 "source": source,
@@ -94,7 +94,7 @@ def parse_pptx(path: str) -> list[dict]:
         text = _clean("\n".join(texts))
         if len(text) < 10:
             continue
-        for i, part in enumerate(_split_long(text, config.CHUNK_MAX_CHARS)):
+        for part in _split_long(text, config.CHUNK_MAX_CHARS):
             chunks.append({
                 "domain": domain,
                 "source": source,

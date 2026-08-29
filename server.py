@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import json
 import logging
+import time
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
@@ -34,7 +35,10 @@ async def chat_stream(req: ChatRequest):
     config_ = {"configurable": {"thread_id": req.thread_id}}
 
     async def event_gen():
-        # 先推送意图与检索上下文，再流式推送回答 token
+        # 阶段计时（可观测性）: 路由 / 检索 / 首 token / 总耗时
+        t0 = time.perf_counter()
+        stamps = {"route_ms": None, "retrieval_ms": None, "first_token_ms": None}
+        intent_seen = None
         sent_tokens = 0
         async for ev in app_graph.astream_events(
             {"messages": [HumanMessage(content=req.query)], "question": req.query,
@@ -43,13 +47,18 @@ async def chat_stream(req: ChatRequest):
         ):
             kind = ev["event"]
             node = (ev.get("metadata") or {}).get("langgraph_node")
+            now = time.perf_counter()
             if kind == "on_chain_end" and node == "route":
                 out = ev["data"]["output"]
                 intent = out.get("intent") if isinstance(out, dict) else getattr(out, "intent", None)
+                if intent and intent_seen is None:
+                    intent_seen = intent
+                    stamps["route_ms"] = round((now - t0) * 1000, 1)
                 yield sse({"type": "intent", "intent": intent})
             elif kind == "on_chain_end" and node == "retrieve":
                 out = ev["data"]["output"]
                 contexts = out.get("contexts", []) if isinstance(out, dict) else []
+                stamps["retrieval_ms"] = round((now - t0) * 1000, 1)
                 yield sse({"type": "contexts", "contexts": [
                     {"source": c["source"], "page": c["page"], "domain": c["domain"],
                      "text": c["text"][:120]}
@@ -58,14 +67,25 @@ async def chat_stream(req: ChatRequest):
             elif kind == "on_chat_model_stream" and node == "answer":
                 chunk = ev["data"]["chunk"]
                 if chunk.content:
+                    if stamps["first_token_ms"] is None:
+                        stamps["first_token_ms"] = round((now - t0) * 1000, 1)
                     sent_tokens += 1
                     yield sse({"type": "token", "content": str(chunk.content)})
         # 闲聊/做题引导不走 answer 节点、无 token 流：补发完整回复，避免前端空白气泡
-        if sent_tokens == 0:
-            final = await app_graph.aget_state(config_)
-            answer = (final.values or {}).get("answer", "")
-            if answer:
-                yield sse({"type": "token", "content": answer})
+        total_ms = round((time.perf_counter() - t0) * 1000, 1)
+        final = await app_graph.aget_state(config_)
+        answer = (final.values or {}).get("answer", "")
+        usage = (final.values or {}).get("usage") or {}
+        if sent_tokens == 0 and answer:
+            yield sse({"type": "token", "content": answer})
+        try:
+            from agents.metrics import record
+            record(req.thread_id, req.query, intent_seen,
+                   stamps["route_ms"], stamps["retrieval_ms"],
+                   stamps["first_token_ms"], total_ms,
+                   usage.get("prompt_tokens"), usage.get("completion_tokens"))
+        except Exception:
+            logging.exception("指标写入失败（不影响回答）")
         yield sse({"type": "done"})
 
     return StreamingResponse(event_gen(), media_type="text/event-stream")
@@ -93,7 +113,7 @@ def quiz_next(req: QuizNextRequest):
     try:
         return get_next_question(mode=req.mode, domain=req.domain)
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 @app.post("/quiz/answer")
@@ -102,7 +122,7 @@ def quiz_answer(req: QuizAnswerRequest):
     try:
         return submit_answer(req.question_id, req.choice)
     except KeyError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 @app.get("/api/stats")
@@ -129,6 +149,13 @@ def api_threads(limit: int = 20):
     """历史会话列表（最近优先）。"""
     from agents.memory import list_threads
     return list_threads(limit=limit)
+
+
+@app.get("/api/metrics")
+def api_metrics():
+    """请求级指标聚合：阶段耗时分位数、Token 用量、意图分布。"""
+    from agents.metrics import summary
+    return summary()
 
 
 # ── 静态面板 ────────────────────────────────────────────────────────────

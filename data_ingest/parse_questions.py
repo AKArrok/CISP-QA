@@ -73,7 +73,7 @@ def parse_pdf700() -> list[dict]:
             num = int(m.group(1))
             q = new_question(f"700题_b{bank}", num)
             q["stem"] = stem
-            for letter, text in zip("ABCD", opts):
+            for letter, text in zip("ABCD", opts, strict=False):
                 if text:
                     q["options"][letter] = OPT_CELL_RE.sub("", text)
             q["answer"] = answer if re.fullmatch(r"[A-D]{1,4}", answer) else ""
@@ -84,7 +84,7 @@ def parse_pdf700() -> list[dict]:
         elif questions:                 # 跨页续行：按列拼回上一题
             prev = questions[-1]
             prev["stem"] += stem
-            for letter, text in zip("ABCD", opts):
+            for letter, text in zip("ABCD", opts, strict=False):
                 if text and letter in prev["options"]:
                     prev["options"][letter] += text
                 elif text:
@@ -298,7 +298,7 @@ def classify_domains(questions: list[dict], use_llm: bool) -> None:
         ]
         try:
             result = invoke_structured(llm, Batch, msg)
-            for q, label in zip(batch, result.labels):
+            for q, label in zip(batch, result.labels, strict=False):
                 if label in DOMAINS:
                     q["domain"] = label
         except Exception as e:

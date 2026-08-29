@@ -4,10 +4,12 @@
 
 ## 功能
 
-- **问答**：基于 10 大知识域课件/知识点总结混合检索（本地向量 + BM25 → RRF），流式回答并标注课件出处；支持多轮追问
+- **问答**：基于 10 大知识域课件/知识点总结的混合检索（本地向量 + BM25 → RRF → **bge-reranker 交叉编码精排**），流式回答并标注课件出处；支持多轮追问（指代消解）
 - **刷题**：1267 道结构化真题（700题PDF + CISP216 + 51CTO六套），随机练习 / 薄弱强化两种模式；真题不足时 AI 参照课件生成补充题
 - **画像**：SQLite 记录答题历史，按知识域统计正确率，答题 ≥3 且正确率 <60% 判为薄弱域，反哺"薄弱强化"出题
 - **长期记忆**：每轮对话落盘 SQLite（`conversations` 表），重启不丢；`GET /api/history?thread_id=` / `GET /api/threads` 查询，供会话恢复
+- **可观测性**：请求级指标采集（路由/检索/首 token/总耗时 + Token 用量）落 SQLite，`GET /api/metrics` 聚合分位数
+- **数据一致性自检**：`data/manifest.json` 版本清单，解析产物与向量索引条数/版本不符时启动即报错并给出修复指令
 
 ## 快速开始
 
@@ -25,11 +27,22 @@ python data_ingest/build_index.py
 python server.py        # → http://localhost:9528
 ```
 
-## 测试
+## 测试与评测
 
 ```bash
-pytest tests/test_parsers.py tests/test_grader.py -q   # 无 API 依赖
-python tests/eval_retrieval.py                          # 检索评测（需索引）
+pytest tests/test_parsers.py tests/test_grader.py tests/test_memory.py -q  # 单测（CI 同款）
+python tests/eval_retrieval.py    # 检索评测：top5/top1 知识域命中率
+python tests/eval_intents.py      # 意图路由/拒答行为回归（需 LLM API）
+```
+
+## Docker 部署
+
+```bash
+docker build -t cisp-qa .
+docker run -p 9528:9528 --env-file .env \
+  -v $(pwd)/data:/app/data -v cisp_hf:/app/.hf_cache cisp-qa
+# 首次启动会下载 embedding/精排模型到 .hf_cache 卷；国内构建时可加
+# --build-arg 或在 Dockerfile 中设置 HF_ENDPOINT=https://hf-mirror.com
 ```
 
 ## 配置（.env）

@@ -58,6 +58,10 @@ RETRIEVER_K = int(os.getenv("RETRIEVER_K", "5"))
 DENSE_K = int(os.getenv("DENSE_K", "20"))
 SPARSE_K = int(os.getenv("SPARSE_K", "20"))
 CHUNK_MAX_CHARS = int(os.getenv("CHUNK_MAX_CHARS", "1200"))
+# 精排（交叉编码重排序）：CPU 单次数秒，关闭后保持 RRF 融合顺序
+ENABLE_RERANKING = os.getenv("ENABLE_RERANKING", "true").lower() == "true"
+RERANK_TOP_K = int(os.getenv("RERANK_TOP_K", "10"))
+LOCAL_RERANKER_MODEL = os.getenv("LOCAL_RERANKER_MODEL", "BAAI/bge-reranker-v2-m3")
 
 # ── 出题 ──
 QUIZ_AI_MIN_BANK = int(os.getenv("QUIZ_AI_MIN_BANK", "5"))   # 域内未做题少于该数时允许 AI 补题

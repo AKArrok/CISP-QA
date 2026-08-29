@@ -14,11 +14,11 @@ jobs:
         with:
           python-version: "3.13"
 
-      # 静态检查（全仓无用 import / 未定义名）
+      # 静态检查（pyflakes/bugbear/async 反模式）
       - name: Lint
         run: |
-          pip install pyflakes
-          python -m pyflakes *.py data_ingest/*.py retrieval/*.py agents/*.py quiz/*.py tests/test_*.py
+          pip install ruff
+          ruff check .
 
       # 单元测试（fixtures 层不依赖本地 data/ 与 API key）
       - name: Install test deps

@@ -1,0 +1,25 @@
+[project]
+name = "cisp-qa"
+version = "1.0.0"
+description = "CISP 备考问答机器人：RAG 问答 + 真题刷题 + 薄弱点画像"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+exclude = ["data", "static"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "B",   # bugbear 常见 bug 模式
+    "ASYNC",  # async 反模式（阻塞调用等）
+]
+ignore = [
+    "E501",  # 行长交由 formatter 把握，中文注释普遍超宽
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
