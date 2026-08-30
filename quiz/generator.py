@@ -35,7 +35,7 @@ GEN_SYSTEM = """你是 CISP 考试出题人。依据给定的课件知识块出 
 def _looks_duplicate(stem: str) -> bool:
     key = normalize_for_match(stem)[:40]
     bank = QuestionBank.get()
-    known = {normalize_for_match(q["stem"])[:40] for q in bank._real + bank._ai}
+    known = {normalize_for_match(q["stem"])[:40] for q in bank._questions}
     return key in known or stem in store.existing_ai_stems()
 
 
@@ -66,7 +66,7 @@ def generate_question(domain: str) -> dict | None:
         return None
     options = {"A": out.option_a, "B": out.option_b, "C": out.option_c, "D": out.option_d}
     qid = store.insert_ai_question(stem, options, answer, out.analysis.strip(), domain)
-    QuestionBank.get().reload_ai()
+    QuestionBank.get().reload()
     return {
         "id": qid, "source": "AI生成", "num": 0, "stem": stem,
         "options": options, "answer": answer, "analysis": out.analysis.strip(),

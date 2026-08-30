@@ -53,6 +53,14 @@ PARSE_FAILURES_PATH = os.path.join(DATA_DIR, "parse_failures.json")
 VECTORS_PATH = os.path.join(DATA_DIR, "vectors.npz")
 DB_PATH = os.path.join(DATA_DIR, "cisp_qa.db")
 
+# ── 存储层（MySQL 主后端 + SQLite 降级；Redis 缓存可选）──
+MYSQL_URL_OVERRIDE = os.getenv("DATABASE_URL", "")   # 例: mysql+pymysql://user:pwd@127.0.0.1/cisp_qa?charset=utf8mb4
+REDIS_URL = os.getenv("REDIS_URL", "redis://127.0.0.1:6379/0")
+ANSWER_CACHE_TTL = int(os.getenv("ANSWER_CACHE_TTL", "3600"))
+RETRIEVAL_CACHE_TTL = int(os.getenv("RETRIEVAL_CACHE_TTL", "600"))
+STATS_CACHE_TTL = int(os.getenv("STATS_CACHE_TTL", "30"))
+RATE_LIMIT_PER_MIN = int(os.getenv("RATE_LIMIT_PER_MIN", "30"))
+
 # ── 检索参数 ──
 RETRIEVER_K = int(os.getenv("RETRIEVER_K", "5"))
 DENSE_K = int(os.getenv("DENSE_K", "20"))

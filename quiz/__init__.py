@@ -41,7 +41,7 @@ def get_next_question(mode: str = "random", domain: str | None = None) -> dict:
 def submit_answer(question_id: str, choice: str) -> dict:
     """作答判分。真题从内存题库取，AI 题从 SQLite 取。"""
     bank = QuestionBank.get()
-    question = next((q for q in bank._real + bank._ai if q["id"] == question_id), None)
+    question = next((q for q in bank._questions if q["id"] == question_id), None)
     if question is None:
         raise KeyError(f"题目不存在: {question_id}")
     result = grade(question, choice)

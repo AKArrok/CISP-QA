@@ -1,17 +1,28 @@
-"""长期记忆（对话落盘）单测，独立临时库，不碰真实数据。"""
+"""长期记忆（对话落盘）单测 — 独立临时库（SQLAlchemy 引擎级隔离），不碰真实数据。"""
 import sys
 
 sys.path.insert(0, ".")
 
-from agents import memory
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+from storage import db as storage_db
+from storage.models import Base
 
 
 def _fresh_memory(tmp_path, monkeypatch):
-    """指向临时库并重置初始化标记。"""
-    db = tmp_path / "mem_test.db"
-    monkeypatch.setattr(memory.config, "DB_PATH", str(db))
-    monkeypatch.setattr(memory, "_initialized", False)
-    return memory
+    """指向临时库的引擎，并重置各模块缓存。"""
+    import agents.memory  # noqa: F401  确保模块已加载
+    engine = create_engine(f"sqlite:///{tmp_path}/mem_test.db",
+                           connect_args={"check_same_thread": False})
+    Base.metadata.create_all(engine)
+    monkeypatch.setattr(storage_db, "_engine", engine)
+    monkeypatch.setattr(storage_db, "_SessionLocal", sessionmaker(bind=engine,
+                                                                  expire_on_commit=False))
+    monkeypatch.setattr(storage_db, "_backend", "sqlite")
+    from storage import cache
+    monkeypatch.setattr(cache, "_client", cache._MemClient(), raising=False)
+    return sys.modules["agents.memory"]
 
 
 def test_save_and_load_round(tmp_path, monkeypatch):

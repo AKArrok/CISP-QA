@@ -33,6 +33,25 @@ def update_manifest(**fields) -> None:
         json.dump(manifest, fp, ensure_ascii=False, indent=1)
 
 
+def _active_question_count() -> int:
+    """活动数据源的题库计数：数据库表非空用 DB，否则用 JSON。"""
+    from storage import repos
+    n = repos.count_questions()
+    if n:
+        return n
+    with open(config.QUESTIONS_PATH, encoding="utf-8") as fp:
+        return len(json.load(fp))
+
+
+def _active_chunk_count() -> int:
+    from storage import repos
+    n = repos.count_chunks()
+    if n:
+        return n
+    with open(config.KB_CHUNKS_PATH, encoding="utf-8") as fp:
+        return len(json.load(fp))
+
+
 def validate_index() -> None:
     """启动自检：四件数据资产齐全且相互一致，否则给出明确的修复指令。"""
     problems = []
@@ -49,20 +68,17 @@ def validate_index() -> None:
     if not manifest:
         problems.append("缺 data/manifest.json → 重跑三个 data_ingest 脚本")
     else:
-        import json as _json
-        with open(config.KB_CHUNKS_PATH, encoding="utf-8") as fp:
-            n_chunks = len(_json.load(fp))
-        with open(config.QUESTIONS_PATH, encoding="utf-8") as fp:
-            n_questions = len(_json.load(fp))
+        n_chunks = _active_chunk_count()
+        n_questions = _active_question_count()
         meta = json.load(open(config.VECTORS_PATH + ".meta.json", encoding="utf-8"))
         if manifest.get("chunk_count") != n_chunks:
             problems.append(
                 f"知识块数与清单不符（manifest={manifest.get('chunk_count')}, 实际={n_chunks}）"
-                " → 重新运行 parse_courses.py 和 build_index.py")
+                " → 重新运行 parse_courses.py、build_index.py、scripts/import_to_db.py")
         if manifest.get("question_count") != n_questions:
             problems.append(
                 f"题库数与清单不符（manifest={manifest.get('question_count')}, 实际={n_questions}）"
-                " → 重新运行 parse_questions.py")
+                " → 重新运行 parse_questions.py、scripts/import_to_db.py")
         if manifest.get("vector_count") != len(meta):
             problems.append(
                 f"向量索引过期（manifest={manifest.get('vector_count')}, 索引={len(meta)}）"

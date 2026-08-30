@@ -16,6 +16,7 @@ from langchain_core.messages import HumanMessage
 
 import config
 from agents.graph import SessionStore
+from storage import cache
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
@@ -31,8 +32,33 @@ class ChatRequest(BaseModel):
 
 @app.post("/chat/stream")
 async def chat_stream(req: ChatRequest):
+    import hashlib
+
+    # 限流（固定窗口，Redis 计数；不可达时降级为进程内存计数）
+    allowed, _n = cache.rate_limit(f"rl:{req.thread_id}", config.RATE_LIMIT_PER_MIN, 60)
+    if not allowed:
+        raise HTTPException(status_code=429, detail="请求过于频繁，稍后再试")
+
     app_graph = SessionStore.get(req.thread_id)
     config_ = {"configurable": {"thread_id": req.thread_id}}
+
+    # 问答缓存：仅首轮（该会话还没有任何历史）问题，避免多轮上下文误命中
+    history_state = await app_graph.aget_state(config_)
+    first_turn = not (history_state.values or {}).get("messages", [])
+    cache_key = f"ans:{hashlib.md5(req.query.strip().encode()).hexdigest()}"
+    if first_turn:
+        cached_answer = cache.get_json(cache_key)
+        if cached_answer:
+            from agents import memory
+            from agents.metrics import record
+            record(req.thread_id, req.query, "knowledge(cached)", 0, 0, 1, 1, 0, 0)
+            memory.save_round(req.thread_id, req.query, cached_answer, "knowledge")
+
+            async def cached_gen():
+                yield sse({"type": "intent", "intent": "knowledge"})
+                yield sse({"type": "token", "content": cached_answer})
+                yield sse({"type": "done", "cached": True})
+            return StreamingResponse(cached_gen(), media_type="text/event-stream")
 
     async def event_gen():
         # 阶段计时（可观测性）: 路由 / 检索 / 首 token / 总耗时
@@ -78,6 +104,8 @@ async def chat_stream(req: ChatRequest):
         usage = (final.values or {}).get("usage") or {}
         if sent_tokens == 0 and answer:
             yield sse({"type": "token", "content": answer})
+        if answer and intent_seen == "knowledge" and first_turn:
+            cache.set_json(cache_key, answer, ttl=config.ANSWER_CACHE_TTL)
         try:
             from agents.metrics import record
             record(req.thread_id, req.query, intent_seen,

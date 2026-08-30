@@ -9,14 +9,22 @@ from quiz import store
 
 
 class QuestionBank:
-    """真题库（questions.json）+ AI 生成题（SQLite）的统一视图。"""
+    """题库统一视图：优先读数据库（questions 表，真题与 AI 题同表），
+    表为空时回退 JSON 文件（零配置场景）。"""
 
     _instance = None
 
     def __init__(self):
+        self._questions = self._load()
+
+    @staticmethod
+    def _load() -> list[dict]:
+        from storage import repos
+        items = repos.load_questions()
+        if items:
+            return items
         with open(config.QUESTIONS_PATH, encoding="utf-8") as fp:
-            self._real = json.load(fp)
-        self.reload_ai()
+            return json.load(fp)
 
     @classmethod
     def get(cls) -> "QuestionBank":
@@ -24,14 +32,14 @@ class QuestionBank:
             cls._instance = cls()
         return cls._instance
 
-    def reload_ai(self) -> None:
-        self._ai = store.list_ai_questions()
+    def reload(self) -> None:
+        self._questions = self._load()
 
     def available(self, domain: str | None = None) -> list[dict]:
         """可出题目：有效（题干/选项/答案齐全）、非重复题；默认排除已答对的题。"""
         done_correct = store.attempted_ids(correct_only=True)
         pool = [
-            q for q in self._real + self._ai
+            q for q in self._questions
             if q["answer"] and not q.get("needs_review") and not q.get("dup_of")
         ]
         if domain:
@@ -40,7 +48,7 @@ class QuestionBank:
         return fresh or pool  # 全部做过时允许复做
 
     def domains(self) -> list[str]:
-        return sorted({q["domain"] for q in self._real + self._ai if q["domain"]})
+        return sorted({q["domain"] for q in self._questions if q["domain"]})
 
 
 def domain_weights(bank: QuestionBank, domain: str | None) -> dict[str, float]:

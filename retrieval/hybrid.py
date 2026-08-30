@@ -43,8 +43,12 @@ class HybridRetriever:
                 f"向量索引不存在: {config.VECTORS_PATH}，请先运行 python data_ingest/build_index.py"
             )
         self._vector = VectorStore.load()
-        with open(config.KB_CHUNKS_PATH, encoding="utf-8") as fp:
-            chunks = json.load(fp)
+        # 知识块优先读数据库（MySQL 主后端），表为空回退 JSON（零配置场景）
+        from storage import repos
+        chunks = repos.load_chunks()
+        if not chunks:
+            with open(config.KB_CHUNKS_PATH, encoding="utf-8") as fp:
+                chunks = json.load(fp)
         self._bm25 = BM25Index.build(chunks)
         self._chunks_by_id = {c["id"]: c for c in chunks}
         logging.info("  检索层就绪: %d 向量块 / %d BM25 文档",
@@ -66,6 +70,13 @@ class HybridRetriever:
         from llms import get_embeddings
 
         top_k = top_k or config.RETRIEVER_K
+        # 检索结果 Redis 缓存（同一查询/域过滤组合在 TTL 内直接复用）
+        import hashlib
+        cache_key = (f"ret:{hashlib.md5(f'{query}|{top_k}|{domain}'.encode()).hexdigest()}")
+        from storage import cache
+        cached = cache.get_json(cache_key)
+        if cached is not None:
+            return cached
         query_vec = get_embeddings().embed_query(query)
         dense = self._vector.search(query_vec, config.DENSE_K)
         sparse = self._bm25.search(query, config.SPARSE_K)
@@ -89,7 +100,9 @@ class HybridRetriever:
         if config.ENABLE_RERANKING:
             from retrieval.reranker import rerank
             full = rerank(query, full[:config.RERANK_TOP_K], top_k)
-        return full[:top_k]
+        results = full[:top_k]
+        cache.set_json(cache_key, results, ttl=config.RETRIEVAL_CACHE_TTL)
+        return results
 
 
 if __name__ == "__main__":

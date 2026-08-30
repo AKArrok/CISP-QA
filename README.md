@@ -10,6 +10,8 @@
 - **长期记忆**：每轮对话落盘 SQLite（`conversations` 表），重启不丢；`GET /api/history?thread_id=` / `GET /api/threads` 查询，供会话恢复
 - **可观测性**：请求级指标采集（路由/检索/首 token/总耗时 + Token 用量）落 SQLite，`GET /api/metrics` 聚合分位数
 - **数据一致性自检**：`data/manifest.json` 版本清单，解析产物与向量索引条数/版本不符时启动即报错并给出修复指令
+- **存储层**（仿 Dify 架构）：SQLAlchemy 2.0 单一建模 + Alembic 迁移，`DATABASE_URL` 驱动——MySQL(utf8mb4) 主后端，连接失败自动降级 SQLite；题库/知识块/答题记录/对话/指标全部入库
+- **Redis 缓存层**：问答缓存（首轮问题 TTL 1h）、检索结果缓存、画像统计缓存（答题即失效）、固定窗口限流；Redis 不可达自动降级进程内存
 
 ## 快速开始
 
@@ -43,6 +45,19 @@ docker run -p 9528:9528 --env-file .env \
   -v $(pwd)/data:/app/data -v cisp_hf:/app/.hf_cache cisp-qa
 # 首次启动会下载 embedding/精排模型到 .hf_cache 卷；国内构建时可加
 # --build-arg 或在 Dockerfile 中设置 HF_ENDPOINT=https://hf-mirror.com
+```
+
+
+## 存储层切换
+
+`.env` 填 `MYSQL_PASSWORD`（或 `DATABASE_URL=mysql+pymysql://user:pwd@host/cisp_qa?charset=utf8mb4`）即用 MySQL；
+留空自动降级 SQLite，行为一致。建库导入：
+
+```bash
+python scripts/import_to_db.py            # JSON 解析产物 → 数据库（幂等，按 id upsert）
+python scripts/import_to_db.py --reset    # 清空 questions/kb_chunks 后重导
+python scripts/import_to_db.py --legacy   # 迁移旧 SQLite 的历史答题/对话数据
+alembic upgrade head                      # 或用迁移管理 schema
 ```
 
 ## 配置（.env）

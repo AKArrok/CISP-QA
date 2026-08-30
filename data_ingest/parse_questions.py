@@ -225,6 +225,22 @@ def parse_51cto_sets() -> tuple[list[dict], list[dict]]:
             if q["source"] == source and not q["answer"] and q["num"] in key_map:
                 q["answer"] = key_map[q["num"]]
                 q["needs_review"] = False
+        # 重号清理：题干内 "2.xxx" 续行可能被误判成新题产生重复 id，
+        # 保留先出现者（通常更完整），后出现者的题干并入前者并删除
+        seen_nums: dict[int, dict] = {}
+        drop: set[int] = set()
+        for idx, q in enumerate(questions):
+            if q["source"] != source:
+                continue
+            first = seen_nums.get(q["num"])
+            if first is None:
+                seen_nums[q["num"]] = q
+            else:
+                first["stem"] += q["stem"]
+                drop.add(idx)
+        if drop:
+            print(f"  [{source}] 清理重号题 {len(drop)} 条")
+            questions = [q for i, q in enumerate(questions) if i not in drop]
         failures.extend(failures_of_incomplete(questions, source))
     return questions, failures
 

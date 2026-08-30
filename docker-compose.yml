@@ -1,0 +1,28 @@
+# 开发/部署编排：redis 必起；mysql 可选（本机已装 MySQL80 服务时无需启动）
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: cisp-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  # 本机没有 MySQL 服务时取消注释
+  # mysql:
+  #   image: mysql:8.0
+  #   container_name: cisp-mysql
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: cisp_qa_dev
+  #     MYSQL_DATABASE: cisp_qa
+  #   ports:
+  #     - "3306:3306"
+  #   volumes:
+  #     - mysql_data:/var/lib/mysql
+  #   command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+  #   restart: unless-stopped
+
+volumes:
+  redis_data:
+  # mysql_data:
