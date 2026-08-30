@@ -49,13 +49,18 @@ def generate_question(domain: str) -> dict | None:
         return None
     context_text = "\n\n".join(c["text"][:600] for c in chunks)
     llm = get_answer_llm(temperature=0.5)
-    try:
-        out = invoke_structured(llm, GeneratedQuestion, [
-            SystemMessage(content=GEN_SYSTEM),
-            HumanMessage(content=f"知识域: {domain}\n\n课件资料:\n{context_text}"),
-        ])
-    except Exception:
-        logger.exception("AI 出题失败 (%s)", domain)
+    messages = [
+        SystemMessage(content=GEN_SYSTEM),
+        HumanMessage(content=f"知识域: {domain}\n\n课件资料:\n{context_text}"),
+    ]
+    out = None
+    for attempt in range(2):  # DeepSeek 结构化输出偶发 400，重试一次
+        try:
+            out = invoke_structured(llm, GeneratedQuestion, messages)
+            break
+        except Exception:
+            logger.exception("AI 出题失败 (第%d次)", attempt + 1)
+    if out is None:
         return None
 
     answer = out.answer.strip().upper()[:1]

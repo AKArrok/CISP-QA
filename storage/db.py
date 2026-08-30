@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 _engine = None
 _SessionLocal = None
 _backend = None  # "mysql" | "sqlite"
-_lock = threading.Lock()
+_lock = threading.RLock()  # RLock: create_all -> get_engine -> _init 同线程重入
 
 
 def _mysql_url() -> str:
@@ -91,9 +91,17 @@ def session() -> Session:
 
 
 def create_all() -> None:
-    """建表（Alembic 之外的开发便捷路径；等价于 Dify 的 db.create_all）。"""
-    from storage.models import Base
-    Base.metadata.create_all(get_engine())
+    """建表（幂等）。并发首调加锁串行化——MySQL 上并发 CREATE/反射会互等元数据锁。"""
+    global _schema_ready
+    with _lock:
+        if _schema_ready:
+            return
+        from storage.models import Base
+        Base.metadata.create_all(get_engine())
+        _schema_ready = True
+
+
+_schema_ready = False
 
 
 def override_engine(engine) -> None:

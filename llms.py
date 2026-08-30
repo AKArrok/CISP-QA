@@ -2,6 +2,7 @@
 import json
 import logging
 import random
+import threading
 import time
 from typing import List, Type, TypeVar
 
@@ -252,25 +253,29 @@ class LocalEmbeddings(Embeddings):
 
 
 _embeddings: Embeddings | None = None
+_emb_lock = threading.Lock()
 
 
 def get_embeddings() -> Embeddings:
     global _embeddings
     if _embeddings is not None:
         return _embeddings
-    if config.EMBEDDING_BACKEND == "ark":
-        _embeddings = ArkCodingEmbeddings(
-            api_key=config.ARK_EMBEDDING_API_KEY,
-            base_url=config.ARK_EMBEDDING_BASE_URL,
-            model=config.ARK_EMBEDDING_MODEL,
-            dimension=config.ARK_EMBEDDING_DIMENSIONS,
-        )
-    elif config.EMBEDDING_BACKEND == "local":
-        _embeddings = LocalEmbeddings(
-            model_name=config.LOCAL_EMBEDDING_MODEL,
-            device=config.LOCAL_EMBEDDING_DEVICE,
-        )
-    else:
-        raise ValueError(f"Unsupported EMBEDDING_BACKEND={config.EMBEDDING_BACKEND!r}; expected ark or local.")
-    logging.info("  Embedding: %s | %s", config.EMBEDDING_BACKEND, _embeddings.model)
-    return _embeddings
+    with _emb_lock:  # 并发首调只加载一次模型（否则重复加载 1GB 权重 + HF 请求风暴）
+        if _embeddings is not None:
+            return _embeddings
+        if config.EMBEDDING_BACKEND == "ark":
+            _embeddings = ArkCodingEmbeddings(
+                api_key=config.ARK_EMBEDDING_API_KEY,
+                base_url=config.ARK_EMBEDDING_BASE_URL,
+                model=config.ARK_EMBEDDING_MODEL,
+                dimension=config.ARK_EMBEDDING_DIMENSIONS,
+            )
+        elif config.EMBEDDING_BACKEND == "local":
+            _embeddings = LocalEmbeddings(
+                model_name=config.LOCAL_EMBEDDING_MODEL,
+                device=config.LOCAL_EMBEDDING_DEVICE,
+            )
+        else:
+            raise ValueError(f"Unsupported EMBEDDING_BACKEND={config.EMBEDDING_BACKEND!r}; expected ark or local.")
+        logging.info("  Embedding: %s | %s", config.EMBEDDING_BACKEND, _embeddings.model)
+        return _embeddings

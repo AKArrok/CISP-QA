@@ -11,7 +11,7 @@ import time
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from langchain_core.messages import HumanMessage
 
 import config
@@ -23,11 +23,27 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 app = FastAPI(title="CISP 备考问答机器人")
 
 
+@app.on_event("startup")
+def warmup() -> None:
+    """启动预热：建表一次、预载本地模型——避免首个请求承受建表/模型加载风暴。"""
+    from storage import db
+    db.create_all()
+    import quiz  # noqa: F401  触发 quiz 包初始化（含 init_db）
+    if config.EMBEDDING_BACKEND == "local":
+        from llms import get_embeddings
+        get_embeddings()  # 预载 embedding 模型
+        if config.ENABLE_RERANKING:
+            from retrieval.reranker import _get_encoder
+            _get_encoder()  # 预载精排模型
+        get_embeddings().embed_query("预热")  # 消除首次前向的惰性初始化
+    logging.info("预热完成")
+
+
 # ── 问答（SSE 流式）────────────────────────────────────────────────────
 
 class ChatRequest(BaseModel):
-    query: str
-    thread_id: str = "default"
+    query: str = Field(min_length=1, max_length=2000)
+    thread_id: str = Field(min_length=1, max_length=64)
 
 
 @app.post("/chat/stream")
