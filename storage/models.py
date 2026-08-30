@@ -67,7 +67,7 @@ class Conversation(Base):
     thread_id: Mapped[str] = mapped_column(String(64), index=True)
     role: Mapped[str] = mapped_column(String(16))          # user | assistant
     content: Mapped[str] = mapped_column(Text)
-    intent: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    intent: Mapped[str | None] = mapped_column(String(32), nullable=True)
     created_at: Mapped[float] = mapped_column(Float)
 
 
@@ -79,7 +79,7 @@ class Metric(Base):
                                      primary_key=True, autoincrement=True)
     thread_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
     question: Mapped[str | None] = mapped_column(Text, nullable=True)
-    intent: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    intent: Mapped[str | None] = mapped_column(String(32), nullable=True)
     route_ms: Mapped[float | None] = mapped_column(Float, nullable=True)
     retrieval_ms: Mapped[float | None] = mapped_column(Float, nullable=True)
     first_token_ms: Mapped[float | None] = mapped_column(Float, nullable=True)

@@ -36,7 +36,8 @@ def update_manifest(**fields) -> None:
 def _active_question_count() -> int:
     """活动数据源的题库计数：数据库表非空用 DB，否则用 JSON。"""
     from storage import repos
-    n = repos.count_questions()
+    # AI 生成题会在运行期合法增长，不计入 manifest 基线校验
+    n = repos.count_questions(exclude_ai=True)
     if n:
         return n
     with open(config.QUESTIONS_PATH, encoding="utf-8") as fp:

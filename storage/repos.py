@@ -14,9 +14,12 @@ logger = logging.getLogger(__name__)
 
 # ── 题库 ────────────────────────────────────────────────────────────────
 
-def count_questions() -> int:
+def count_questions(exclude_ai: bool = False) -> int:
     with db.session() as s:
-        return s.scalar(select(func.count()).select_from(Question)) or 0
+        stmt = select(func.count()).select_from(Question)
+        if exclude_ai:
+            stmt = stmt.where(Question.source != "AI生成")
+        return s.scalar(stmt) or 0
 
 
 def upsert_questions(items: list[dict], batch_size: int = 200) -> int:

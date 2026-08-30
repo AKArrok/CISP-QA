@@ -41,13 +41,13 @@ def summary(limit: int = 500) -> dict:
     n = len(rows)
     if n == 0:
         return {"total_requests": 0}
-    keys = ["route_ms", "retrieval_ms", "first_token_ms", "total_ms",
+    keys = ["intent", "route_ms", "retrieval_ms", "first_token_ms", "total_ms",
             "prompt_tokens", "completion_tokens"]
     cols = {k: [r[idx] for r in rows if r[idx] is not None]
             for idx, k in enumerate(keys)}
     by_intent: dict[str, int] = {}
-    for r in rows:
-        by_intent[r[0] or "unknown"] = by_intent.get(r[0] or "unknown", 0) + 1
+    for intent in cols["intent"]:
+        by_intent[intent or "unknown"] = by_intent.get(intent or "unknown", 0) + 1
     return {
         "total_requests": n,
         "by_intent": by_intent,
