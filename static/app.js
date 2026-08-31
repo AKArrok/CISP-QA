@@ -153,21 +153,36 @@ async function choose(letter, el) {
   $("q-feedback").classList.remove("hidden");
 }
 
+function confLabel(conf) {
+  if (conf === null || conf === undefined) return "—";
+  return conf < 0.5 ? "低" : conf < 0.8 ? "中" : "高";
+}
+
 async function loadStats() {
   try {
     const s = await (await fetch("/api/stats")).json();
-    $("stats-summary").textContent = s.total_attempts
-      ? `累计答题 ${s.total_attempts} 道，总正确率 ${(s.total_accuracy * 100).toFixed(1)}%` +
-        (s.weak_domains.length ? `；薄弱域：${s.weak_domains.join("、")}` : "")
-      : "还没有答题记录，先来做几道题吧！";
+    if (!s.total_attempts) {
+      $("stats-summary").textContent = "还没有答题记录，先来做几道题吧！";
+      return;
+    }
+    let summary = `累计答题 ${s.total_attempts} 道，总正确率 ${(s.total_accuracy * 100).toFixed(1)}%`;
+    if (s.weak_domains.length) summary += `；薄弱域：${s.weak_domains.join("、")}`;
+    if (s.review_due_domains.length) summary += `；复习到期：${s.review_due_domains.join("、")}`;
+    $("stats-summary").textContent = summary;
     const tbody = $("stats-table").querySelector("tbody");
     tbody.innerHTML = "";
     for (const d of s.domains) {
       const tr = document.createElement("tr");
-      const pct = d.accuracy === null ? "—" : (d.accuracy * 100).toFixed(0) + "%";
+      const masteryPct = d.mastery === null || d.mastery === undefined ? "—" : (d.mastery * 100).toFixed(0) + "%";
+      const status = d.weak ? "⚠ 薄弱"
+        : d.insufficient ? "样本不足"
+        : d.due_for_review ? "复习到期"
+        : "正常";
+      const statusCls = d.weak ? "weak" : d.due_for_review ? "review" : "";
       tr.innerHTML = `<td>${d.domain}</td><td>${d.attempts}</td>
-        <td><span class="bar" style="width:${d.accuracy ? d.accuracy * 80 : 0}px"></span>${pct}</td>
-        <td class="${d.weak ? "weak" : ""}">${d.weak ? "⚠ 薄弱" : "正常"}</td>`;
+        <td><span class="bar" style="width:${d.mastery ? d.mastery * 80 : 0}px"></span>${masteryPct}</td>
+        <td>${confLabel(d.confidence)}</td>
+        <td class="${statusCls}">${status}</td>`;
       tbody.appendChild(tr);
     }
   } catch (e) { /* 忽略 */ }

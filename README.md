@@ -34,6 +34,7 @@ python server.py        # → http://localhost:9528
 ```bash
 pytest tests/test_parsers.py tests/test_grader.py tests/test_memory.py -q  # 单测（CI 同款）
 python tests/eval_retrieval.py    # 检索评测：top5/top1 知识域命中率
+python tests/compare_chunking.py  # 三方案切片 A/B/C 对比（legacy/fixed/structured）
 python tests/eval_intents.py      # 意图路由/拒答行为回归（需 LLM API）
 ```
 
@@ -65,7 +66,9 @@ alembic upgrade head                      # 或用迁移管理 schema
 | 变量 | 说明 |
 |------|------|
 | `LLM_API_KEY` / `LLM_BASE_URL` / `LLM_MODEL` | DeepSeek 问答与路由 |
-| `EMBEDDING_BACKEND` | `local`（Qwen3-Embedding-0.6B，当前默认）/ `ark`（doubao-embedding-vision，需 Coding Plan 订阅有效） |
+| `EMBEDDING_BACKEND` | `dashscope`（默认，qwen3.7-text-embedding）/ `local`（Qwen3-Embedding-0.6B）/ `ark`（doubao-embedding-vision，需 Coding Plan 订阅有效） |
+| `DASHSCOPE_API_KEY` / `DASHSCOPE_EMBEDDING_BASE_URL` / `DASHSCOPE_EMBEDDING_MODEL` | 百炼 embedding（OpenAI 兼容接口，默认模型 `qwen3.7-text-embedding`，1024 维） |
+| `CHUNK_STRATEGY` | `structured`（默认：语义 Child 检索、完整 Parent 回答）/ `fixed`（定长+字符重叠）/ `legacy`（旧按页切片，仅用于 A/B/C 对比） |
 | `CISP_COURSE_DIR` / `CISP_EXAM_DIR` | 原始资料路径 |
 
 ## 结构

@@ -43,12 +43,9 @@ class HybridRetriever:
                 f"向量索引不存在: {config.VECTORS_PATH}，请先运行 python data_ingest/build_index.py"
             )
         self._vector = VectorStore.load()
-        # 知识块优先读数据库（MySQL 主后端），表为空回退 JSON（零配置场景）
-        from storage import repos
-        chunks = repos.load_chunks()
-        if not chunks:
-            with open(config.KB_CHUNKS_PATH, encoding="utf-8") as fp:
-                chunks = json.load(fp)
+        # JSON 是向量索引的规范数据源，必须保留父子切片字段并与向量 ID 严格对齐。
+        with open(config.KB_CHUNKS_PATH, encoding="utf-8") as fp:
+            chunks = json.load(fp)
         self._bm25 = BM25Index.build(chunks)
         self._chunks_by_id = {c["id"]: c for c in chunks}
         logging.info("  检索层就绪: %d 向量块 / %d BM25 文档",
@@ -96,7 +93,17 @@ class HybridRetriever:
                 for c in extra[:top_k - len(full)]:
                     chunk = self._chunks_by_id[c["id"]]
                     full.append({**chunk, "score": c.get("score", 0.0)})
-        # 精排：对过滤后的候选交叉编码重排序（失败自动降级为原顺序）
+        # 同一 Parent 的多个 Child 只保留召回排名最高者，避免重复上下文挤占 top-k。
+        unique_parents = []
+        seen_parents = set()
+        for chunk in full:
+            parent_id = chunk.get("parent_id", chunk["id"])
+            if parent_id not in seen_parents:
+                seen_parents.add(parent_id)
+                unique_parents.append(chunk)
+        full = unique_parents
+
+        # 精排：用 Child 检索文本评分，最终返回完整 Parent 文本。
         if config.ENABLE_RERANKING:
             from retrieval.reranker import rerank
             full = rerank(query, full[:config.RERANK_TOP_K], top_k)

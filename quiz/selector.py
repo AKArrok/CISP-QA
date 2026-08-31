@@ -52,15 +52,24 @@ class QuestionBank:
 
 
 def domain_weights(bank: QuestionBank, domain: str | None) -> dict[str, float]:
-    """weak 模式: 各域权重 = 1 - 正确率（无答题记录的域给中等权重 0.5）。"""
-    from quiz.stats import domain_accuracy
+    """weak 模式: 权重 = Elo 缺口 + 薄弱加成 + 复习到期加成（无记录域 0.5 中等优先）。"""
+    from quiz.stats import domain_profiles
 
-    accs = domain_accuracy()
+    profiles = domain_profiles()
     domains = [d for d in bank.domains() if (not domain or d == domain)]
     weights = {}
     for d in domains:
-        attempts, acc = accs.get(d, (0, None))
-        weights[d] = (1.0 - acc) if acc is not None else 0.5
+        p = profiles.get(d)
+        if p is None:
+            weights[d] = 0.5
+            continue
+        # Elo 缺口：rating 越低越该练（1500 初始 → 0.5，满分 2000 → 0）
+        w = max(0.1, (2000 - p["rating"]) / 2000)
+        if p["weak"]:
+            w *= 1.8          # 薄弱域显著提权
+        if p["due_for_review"]:
+            w *= 1.3          # 复习到期提权（防遗忘）
+        weights[d] = w
     total = sum(weights.values()) or 1.0
     return {d: w / total for d, w in weights.items()}
 

@@ -114,3 +114,13 @@ def domain_accuracy_rows() -> list[tuple[str, int, int]]:
             .group_by(Attempt.domain)
         ).all()
     return [(d, n, int(c or 0)) for d, n, c in rows]
+
+
+def attempt_rows() -> list[tuple[str, int, float]]:
+    """[(知识域, 是否正确, 答题时间戳)]，画像聚合用（Elo 需按时间 replay）。"""
+    with db.session() as s:
+        rows = s.execute(
+            select(Attempt.domain, Attempt.correct, Attempt.answered_at)
+            .where(Attempt.domain.is_not(None))
+        ).all()
+    return [(d, bool(c), float(t)) for d, c, t in rows]

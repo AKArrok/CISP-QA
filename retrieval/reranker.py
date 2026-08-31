@@ -42,7 +42,10 @@ def rerank(query: str, candidates: list[dict], top_k: int) -> list[dict]:
     if encoder is None or len(candidates) == 1:
         return candidates[:top_k]
     try:
-        pairs = [[query, c["text"]] for c in candidates]
+        pairs = [[
+            query,
+            c.get("embedding_text") or c.get("child_text") or c["text"],
+        ] for c in candidates]
         with _predict_gate:
             scores = encoder.predict(pairs, show_progress_bar=False)
         ranked = sorted(zip(candidates, scores, strict=True), key=lambda x: -x[1])

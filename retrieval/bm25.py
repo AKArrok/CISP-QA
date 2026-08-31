@@ -34,7 +34,9 @@ class BM25Index:
 
     @classmethod
     def build(cls, chunks: list[dict]) -> "BM25Index":
-        return cls([tokenize(c["text"]) for c in chunks], chunks)
+        return cls([
+            tokenize(c.get("embedding_text", c["text"])) for c in chunks
+        ], chunks)
 
     def search(self, query: str, top_k: int) -> list[dict]:
         q_tokens = tokenize(query)

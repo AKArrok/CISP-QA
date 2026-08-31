@@ -101,6 +101,7 @@ header h1 { font-size: 20px; }
   text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border);
 }
 #stats-table .weak { color: var(--bad); font-weight: 700; }
+#stats-table .review { color: #b8860b; font-weight: 600; }
 .bar {
   display: inline-block; height: 10px; background: var(--primary);
   border-radius: 5px; vertical-align: middle; margin-right: 8px;

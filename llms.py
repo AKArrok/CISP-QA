@@ -220,7 +220,84 @@ class ArkCodingEmbeddings(Embeddings):
 
 
 # ══════════════════════════════════════════════════════════════════════
-# 本地 HuggingFace Embeddings（Ark Coding Plan 订阅失效时的兜底，零 API 成本）
+# DashScope / Model Studio Embeddings（OpenAI 兼容接口）
+# ══════════════════════════════════════════════════════════════════════
+
+class DashScopeEmbeddings(Embeddings):
+    """百炼 qwen3.7-text-embedding 客户端，支持批处理和限流退避。"""
+
+    def __init__(self, api_key: str, base_url: str, model: str, dimension: int):
+        if not api_key:
+            raise EnvironmentError(
+                "DASHSCOPE_API_KEY is required when EMBEDDING_BACKEND=dashscope"
+            )
+        if not base_url:
+            raise EnvironmentError(
+                "DASHSCOPE_WORKSPACE_ID or DASHSCOPE_EMBEDDING_BASE_URL is required"
+            )
+        self.client = OpenAI(api_key=api_key, base_url=base_url)
+        self.model = model
+        self.dimension = dimension
+        self.request_interval = config.DASHSCOPE_EMBEDDING_REQUEST_INTERVAL
+        self.max_retries = config.DASHSCOPE_EMBEDDING_MAX_RETRIES
+        self.max_backoff = config.DASHSCOPE_EMBEDDING_MAX_BACKOFF
+        self._last_request_at = 0.0
+
+    @property
+    def active_model(self) -> str:
+        return self.model
+
+    @property
+    def model_identity(self) -> str:
+        return f"dashscope:{self.model}:{self.dimension}"
+
+    def _wait_for_request_slot(self) -> None:
+        remaining = self.request_interval - (time.monotonic() - self._last_request_at)
+        if remaining > 0:
+            time.sleep(remaining)
+
+    def _create_embeddings(self, batch: List[str]):
+        for attempt in range(self.max_retries + 1):
+            self._wait_for_request_slot()
+            try:
+                return self.client.embeddings.create(
+                    model=self.model,
+                    input=batch,
+                    dimensions=self.dimension,
+                    encoding_format="float",
+                )
+            except Exception as exc:
+                status_code = getattr(exc, "status_code", None)
+                retryable = status_code == 429 or status_code is None
+                if not retryable or attempt >= self.max_retries:
+                    raise
+                delay = min(max(self.request_interval, 2 ** attempt), self.max_backoff)
+                delay += random.uniform(0, 0.5)
+                logging.warning("DashScope embedding 请求失败，%.1f 秒后重试 (%d/%d)",
+                                delay, attempt + 1, self.max_retries)
+                time.sleep(delay)
+            finally:
+                self._last_request_at = time.monotonic()
+
+    def embed_documents(self, texts: List[str], target_dim: int | None = None) -> List[List[float]]:
+        expected_dim = target_dim or self.dimension
+        if expected_dim != self.dimension:
+            raise ValueError(
+                f"DashScope embedding dimension {self.dimension} does not match target {expected_dim}."
+            )
+        vectors: List[List[float]] = []
+        # qwen3.7-text-embedding 的文本列表单次最多 20 条。
+        for start in range(0, len(texts), 20):
+            response = self._create_embeddings(texts[start:start + 20])
+            vectors.extend(item.embedding for item in response.data)
+        return vectors
+
+    def embed_query(self, text: str, target_dim: int | None = None) -> List[float]:
+        return self.embed_documents([text], target_dim=target_dim)[0]
+
+
+# ══════════════════════════════════════════════════════════════════════
+# 本地 HuggingFace Embeddings（离线兜底）
 # ══════════════════════════════════════════════════════════════════════
 
 class LocalEmbeddings(Embeddings):
@@ -263,7 +340,14 @@ def get_embeddings() -> Embeddings:
     with _emb_lock:  # 并发首调只加载一次模型（否则重复加载 1GB 权重 + HF 请求风暴）
         if _embeddings is not None:
             return _embeddings
-        if config.EMBEDDING_BACKEND == "ark":
+        if config.EMBEDDING_BACKEND == "dashscope":
+            _embeddings = DashScopeEmbeddings(
+                api_key=config.DASHSCOPE_API_KEY,
+                base_url=config.DASHSCOPE_EMBEDDING_BASE_URL,
+                model=config.DASHSCOPE_EMBEDDING_MODEL,
+                dimension=config.DASHSCOPE_EMBEDDING_DIMENSIONS,
+            )
+        elif config.EMBEDDING_BACKEND == "ark":
             _embeddings = ArkCodingEmbeddings(
                 api_key=config.ARK_EMBEDDING_API_KEY,
                 base_url=config.ARK_EMBEDDING_BASE_URL,
@@ -276,6 +360,9 @@ def get_embeddings() -> Embeddings:
                 device=config.LOCAL_EMBEDDING_DEVICE,
             )
         else:
-            raise ValueError(f"Unsupported EMBEDDING_BACKEND={config.EMBEDDING_BACKEND!r}; expected ark or local.")
+            raise ValueError(
+                f"Unsupported EMBEDDING_BACKEND={config.EMBEDDING_BACKEND!r}; "
+                "expected dashscope, ark, or local."
+            )
         logging.info("  Embedding: %s | %s", config.EMBEDDING_BACKEND, _embeddings.model)
         return _embeddings

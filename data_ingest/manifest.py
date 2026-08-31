@@ -14,6 +14,7 @@ import config
 
 MANIFEST_PATH = os.path.join(config.DATA_DIR, "manifest.json")
 
+# structured_v1 只新增可选字段，legacy JSON 仍可读取，保持向后兼容。
 KB_SCHEMA_VERSION = 1
 QUESTIONS_SCHEMA_VERSION = 1
 
@@ -45,10 +46,7 @@ def _active_question_count() -> int:
 
 
 def _active_chunk_count() -> int:
-    from storage import repos
-    n = repos.count_chunks()
-    if n:
-        return n
+    # 向量索引直接由 JSON 构建；这里也必须校验同一个规范数据源。
     with open(config.KB_CHUNKS_PATH, encoding="utf-8") as fp:
         return len(json.load(fp))
 
