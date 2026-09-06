@@ -1,7 +1,7 @@
 """ORM 模型 — 仿 Dify 的做法：全项目单一建模，方言由 DATABASE_URL 决定。
 
-MySQL（utf8mb4）为主后端，SQLite 为零配置降级。向量索引不进关系库
-（与 Dify/RAGFlow 一致：向量放在独立引擎，这里用本地 npz）。
+MySQL（utf8mb4）为主后端，SQLite 为零配置降级。课件向量索引与长期
+记忆向量都不进关系库（这里用本地 npz）。
 """
 from __future__ import annotations
 
@@ -58,8 +58,43 @@ class Attempt(Base):
     answered_at: Mapped[float] = mapped_column(Float)
 
 
+class ReviewCard(Base):
+    """题目级 FSRS 复习卡（每道答过的题一张，答错/答对驱动 DSR 状态更新）。
+
+    存 FSRS Card 的标量快照（epoch 浮点时间戳），由 quiz/review.py 读写。
+    """
+    __tablename__ = "review_cards"
+
+    question_id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    domain: Mapped[str | None] = mapped_column(String(32), nullable=True, index=True)
+    state: Mapped[int] = mapped_column(Integer, default=0)          # FSRS State
+    step: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    stability: Mapped[float] = mapped_column(Float, default=0.0)
+    difficulty: Mapped[float] = mapped_column(Float, default=0.0)
+    due: Mapped[float] = mapped_column(Float, index=True)           # epoch 秒
+    last_review: Mapped[float | None] = mapped_column(Float, nullable=True)
+    reps: Mapped[int] = mapped_column(Integer, default=0)
+    lapses: Mapped[int] = mapped_column(Integer, default=0)
+
+
+class QuestionSignal(Base):
+    """问答侧薄弱信号：用户在知识问答中提问的知识域（画像融合用）。
+
+    与 attempts 互补：答题对错是强信号，反复追问某域是"哪里不会"的先验信号。
+    """
+    __tablename__ = "question_signals"
+
+    id: Mapped[int] = mapped_column(BigInteger().with_variant(Integer, "sqlite"),
+                                     primary_key=True, autoincrement=True)
+    thread_id: Mapped[str] = mapped_column(String(64), index=True)
+    question: Mapped[str] = mapped_column(Text)
+    domain: Mapped[str | None] = mapped_column(String(32), nullable=True, index=True)
+    intent: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    created_at: Mapped[float] = mapped_column(Float)
+
+
 class Conversation(Base):
-    """长期记忆：对话轮次落盘。"""
+    """旧版对话表：保留给历史迁移/兼容，当前长期记忆走向量文件。"""
     __tablename__ = "conversations"
 
     id: Mapped[int] = mapped_column(BigInteger().with_variant(Integer, "sqlite"),

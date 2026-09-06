@@ -1,27 +1,18 @@
-"""长期记忆（对话落盘）单测 — 独立临时库（SQLAlchemy 引擎级隔离），不碰真实数据。"""
+"""记忆层单测 — 独立临时向量文件与缓存，不碰真实数据。"""
 import sys
 
 sys.path.insert(0, ".")
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-
-from storage import db as storage_db
-from storage.models import Base
-
 
 def _fresh_memory(tmp_path, monkeypatch):
-    """指向临时库的引擎，并重置各模块缓存。"""
+    """指向临时向量文件，并重置缓存。"""
+    import config
     import agents.memory  # noqa: F401  确保模块已加载
-    engine = create_engine(f"sqlite:///{tmp_path}/mem_test.db",
-                           connect_args={"check_same_thread": False})
-    Base.metadata.create_all(engine)
-    monkeypatch.setattr(storage_db, "_engine", engine)
-    monkeypatch.setattr(storage_db, "_SessionLocal", sessionmaker(bind=engine,
-                                                                  expire_on_commit=False))
-    monkeypatch.setattr(storage_db, "_backend", "sqlite")
+    monkeypatch.setattr(config, "MEMORY_VECTORS_PATH", str(tmp_path / "memory_vectors.npz"))
     from storage import cache
+    monkeypatch.setattr(cache, "_mem_store", {}, raising=False)
     monkeypatch.setattr(cache, "_client", cache._MemClient(), raising=False)
+    monkeypatch.setattr(cache, "_live", False, raising=False)
     return sys.modules["agents.memory"]
 
 
@@ -52,3 +43,21 @@ def test_history_limit_keeps_latest(tmp_path, monkeypatch):
     hist = mem.load_history("tX", limit=2)
     assert len(hist) == 2
     assert hist[0]["content"] == "q2"  # 保留最新两轮，旧的在前
+
+
+def test_short_context_keeps_latest_rounds(tmp_path, monkeypatch):
+    mem = _fresh_memory(tmp_path, monkeypatch)
+    for i in range(7):
+        mem.save_round("tS", f"q{i}", f"a{i}", "knowledge")
+    hist = mem.load_short_context("tS")
+    assert len(hist) == 10
+    assert hist[0]["content"] == "q2"
+
+
+def test_search_long_memory_returns_thread_match(tmp_path, monkeypatch):
+    mem = _fresh_memory(tmp_path, monkeypatch)
+    mem.save_round("t1", "什么是RTO？", "恢复时间目标", "knowledge")
+    mem.save_round("t2", "什么是IDS？", "入侵检测系统", "knowledge")
+    hits = mem.search_long_memory("RTO", thread_id="t1", top_k=1)
+    assert hits
+    assert hits[0]["thread_id"] == "t1"

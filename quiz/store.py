@@ -23,13 +23,14 @@ def init_db() -> None:
 # ── AI 生成题（写 questions 表）─────────────────────────────────────────
 
 def insert_ai_question(stem: str, options: dict, answer: str,
-                       analysis: str, domain: str) -> str:
+                       analysis: str, domain: str,
+                       needs_review: bool = False) -> str:
     qid = f"ai_{int(time.time() * 1000)}"
     with db.session() as s:
         s.add(Question(id=qid, source="AI生成", num=0, stem=stem,
                        options=json.dumps(options, ensure_ascii=False),
                        answer=answer, analysis=analysis, domain=domain,
-                       needs_review=False))
+                       needs_review=needs_review))
         s.commit()
     return qid
 

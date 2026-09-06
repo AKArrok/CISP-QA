@@ -6,6 +6,8 @@ import math
 import re
 from collections import Counter
 
+from data_ingest.tables import split_table_markdown
+
 
 _BULLET_RE = re.compile(
     r"^(?:[•·●○◆◇■□▪▫]|[-—]|\d+(?:\.\d+)*[、.．)]|"
@@ -151,30 +153,66 @@ def _pack_children(
     return [part for group in groups for part in split_long("\n".join(group), max_chars)]
 
 
+def _table_block(table: dict) -> str:
+    """表格在 Parent 文本中的呈现：表头标记 + 表题/引导语 + markdown。"""
+    caption = (table.get("caption") or "").strip()
+    header = f"【表格】{caption}" if caption else "【表格】"
+    return f"{header}\n{table['markdown']}"
+
+
+def _table_children(table: dict, max_chars: int) -> list[str]:
+    """表格 Child：注入【表格】标记与表题语境；超长按数据行切分并重复表头行。"""
+    caption = (table.get("caption") or "").strip()
+    header = f"【表格】{caption}" if caption else "【表格】"
+    markdown = table["markdown"]
+    if len(header) + 1 + len(markdown) <= max_chars:
+        return [f"{header}\n{markdown}"]
+    budget = max(max_chars - len(header) - 1, 40)
+    parts = split_table_markdown(markdown, markdown.splitlines()[0], budget)
+    children = [f"{header}\n{part}" for part in parts]
+    # 单行超预算的极端情况由 split_long 兜底硬切
+    return [piece for child in children for piece in split_long(child, max_chars)]
+
+
 def build_structured_chunks(
     pages: list[dict], target_chars: int = 220, max_chars: int = 420,
     overlap_units: int = 1,
 ) -> list[dict]:
-    """从同一文档的页面生成结构化父子 Chunk。"""
-    cleaned_pages = strip_repeated_lines([page["text"] for page in pages])
+    """从同一文档的页面生成结构化父子 Chunk；合格表格额外产出独立表格 Child。
+
+    表格页的 Parent = 正文 + markdown 表格（回答时表格与正文一起送 LLM）；
+    表格 Child 带表题语境独立参与检索，与正文 Child 共享同一 parent_id，
+    召回任一即可还原"正文+表格"完整上下文。无表格页面行为与旧版完全一致。
+    """
+    base_texts = [
+        page["body_text"] if page.get("tables") else page["text"]
+        for page in pages
+    ]
+    cleaned_pages = strip_repeated_lines(base_texts)
     chunks: list[dict] = []
     last_title = ""
-    for page, parent_text in zip(pages, cleaned_pages, strict=True):
+    for page, cleaned_body in zip(pages, cleaned_pages, strict=True):
+        tables = page.get("tables") or []
+        parent_parts = [cleaned_body] + [_table_block(table) for table in tables]
+        parent_text = "\n\n".join(part for part in parent_parts if part.strip())
         if len(parent_text) < 10:
             continue
-        detected_title, units = semantic_units(parent_text)
+        detected_title, units = semantic_units(cleaned_body)
         if detected_title:
             last_title = detected_title
         title = detected_title or last_title  # 续页（无标题）继承上一页标题，补足检索上下文
-        if not units:
+        children: list[tuple[str, str]] = [
+            (child, "text")
+            for child in _pack_children(units, target_chars, max_chars, overlap_units)
+        ]
+        if not children and not tables:
             continue  # 纯标题页不产生 Chunk，仅用于标题继承
-        children = _pack_children(units, target_chars, max_chars, overlap_units)
-        if not children:
-            children = split_long(parent_text, max_chars)
+        for table in tables:
+            children.extend((child, "table") for child in _table_children(table, max_chars))
         parent_id = _stable_id(
             "parent", page["domain"], page["source"], page["page"], parent_text
         )
-        for index, child_text in enumerate(children):
+        for index, (child_text, element) in enumerate(children):
             embedding_text = "\n".join(filter(None, [
                 f"知识域：{page['domain']}",
                 f"知识点：{title}" if title else "",
@@ -193,6 +231,7 @@ def build_structured_chunks(
                 "text": parent_text,
                 "child_text": child_text,
                 "embedding_text": embedding_text,
+                "element": element,
                 "chunking_strategy": "structured_v1",
             })
     return chunks

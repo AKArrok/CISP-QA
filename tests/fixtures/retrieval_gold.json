@@ -1,0 +1,1919 @@
+[
+ {
+  "id": "assurance_characteristics",
+  "question": "信息安全有哪些典型特征？",
+  "query_type": "definition",
+  "primary_domain": "信息安全保障",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《信息安全保障》知识点总结",
+    "page": 1,
+    "must_contain": [
+     "信息安全特征",
+     "系统",
+     "动态",
+     "无边界",
+     "非传统"
+    ]
+   },
+   {
+    "source": "信息安全保障_V4.1",
+    "page": 6,
+    "must_contain": [
+     "信息安全的特征",
+     "系统",
+     "动态",
+     "无边界",
+     "非传统"
+    ]
+   },
+   {
+    "source": "信息安全保障_V4.2",
+    "page": 6,
+    "must_contain": [
+     "信息安全的特征",
+     "系统",
+     "动态",
+     "无边界",
+     "非传统"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "assurance_ppdr",
+  "question": "PPDR模型由哪些环节组成，它强调什么思想？",
+  "query_type": "acronym",
+  "primary_domain": "信息安全保障",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《信息安全保障》知识点总结",
+    "page": 1,
+    "must_contain": [
+     "PPDR",
+     "策略",
+     "保护",
+     "检测",
+     "响应"
+    ]
+   },
+   {
+    "source": "信息安全保障_V4.1",
+    "page": 36,
+    "must_contain": [
+     "PPDR",
+     "安全策略",
+     "防护",
+     "检测",
+     "响应"
+    ]
+   },
+   {
+    "source": "信息安全保障_V4.2",
+    "page": 34,
+    "must_contain": [
+     "PPDR",
+     "安全策略",
+     "防护",
+     "检测",
+     "响应"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "assurance_iatf",
+  "question": "IATF纵深防御框架的三个核心和四个保护方面是什么？",
+  "query_type": "acronym",
+  "primary_domain": "信息安全保障",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《物理网络安全》知识点总结",
+    "page": 6,
+    "must_contain": [
+     "IATF",
+     "人",
+     "技术",
+     "操作",
+     "本地计算环境",
+     "区域边界",
+     "网络基础设施",
+     "支撑性基础设施"
+    ]
+   },
+   {
+    "source": "信息安全保障_V4.1",
+    "page": 39,
+    "must_contain": [
+     "IATF",
+     "人",
+     "技术",
+     "操作",
+     "保护网络和基础设施",
+     "保护区域边界",
+     "保护计算环境",
+     "支持性基础设施"
+    ]
+   },
+   {
+    "source": "信息安全保障_V4.2",
+    "page": 38,
+    "must_contain": [
+     "IATF",
+     "人",
+     "技术",
+     "操作",
+     "保护网络和基础设施",
+     "保护区域边界",
+     "保护计算环境",
+     "支持性基础设施"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "assurance_critical_infrastructure",
+  "question": "我国法律中关键信息基础设施包括哪些重要行业和领域？",
+  "query_type": "definition",
+  "primary_domain": "信息安全保障",
+  "evidence": [
+   {
+    "source": "信息安全保障_V4.2",
+    "page": 11,
+    "must_contain": [
+     "关键基础设施",
+     "公共通信",
+     "能源",
+     "交通",
+     "水利",
+     "金融"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "regulation_cybersecurity_law_date",
+  "question": "《网络安全法》从什么时候开始实施？",
+  "query_type": "fact",
+  "primary_domain": "信息安全监管",
+  "evidence": [
+   {
+    "source": "网络安全监管_v4.2",
+    "page": 20,
+    "must_contain": [
+     "2017年6月1日",
+     "网络安全法",
+     "实施"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "regulation_mlps_levels",
+  "question": "网络安全等级保护一共分为几级，最高是哪一级？",
+  "query_type": "fact",
+  "primary_domain": "信息安全监管",
+  "evidence": [
+   {
+    "source": "网络安全监管_v4.2",
+    "page": 52,
+    "must_contain": [
+     "第一级",
+     "第二级",
+     "第三级",
+     "第四级",
+     "第五级"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "regulation_document_27",
+  "question": "中央办公厅2003年27号文件提出了什么方针，九项工作不包括哪些内容？",
+  "query_type": "fact",
+  "primary_domain": "信息安全监管",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《信息安全监管》知识点总结",
+    "page": 1,
+    "must_contain": [
+     "27 号文件",
+     "积极防御",
+     "综合防范",
+     "9 项工作内容",
+     "国产化"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "regulation_strategy_goals",
+  "question": "我国网络空间安全战略的五项目标是什么？",
+  "query_type": "fact",
+  "primary_domain": "信息安全监管",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《信息安全监管》知识点总结",
+    "page": 1,
+    "must_contain": [
+     "五项目标",
+     "和平",
+     "安全",
+     "开放",
+     "合作",
+     "有序"
+    ]
+   },
+   {
+    "source": "信息安全监管_v4.1",
+    "page": 29,
+    "must_contain": [
+     "国家网络空间安全战略",
+     "和平",
+     "安全",
+     "开放",
+     "合作",
+     "有序",
+     "战略目标"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "support_aes_key_lengths",
+  "question": "AES支持哪三种密钥长度？",
+  "query_type": "fact",
+  "primary_domain": "信息安全支撑技术",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《安全支撑技术》知识点总结",
+    "page": 1,
+    "must_contain": [
+     "AES",
+     "128",
+     "192",
+     "256"
+    ]
+   },
+   {
+    "source": "信息安全支撑技术_V4.2",
+    "page": 15,
+    "must_contain": [
+     "AES",
+     "密钥长度",
+     "128",
+     "192",
+     "256"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "support_crl",
+  "question": "PKI中如何查询已经被撤销的证书，列表里记录什么？",
+  "query_type": "scenario",
+  "primary_domain": "信息安全支撑技术",
+  "evidence": [
+   {
+    "source": "信息安全支撑技术_V4.2",
+    "page": 27,
+    "must_contain": [
+     "CRL",
+     "证书撤销",
+     "序列号",
+     "证书黑名单"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "support_mac_models",
+  "question": "强制访问控制有哪些典型安全模型？",
+  "query_type": "definition",
+  "primary_domain": "信息安全支撑技术",
+  "evidence": [
+   {
+    "source": "信息安全支撑技术_V4.2",
+    "page": 64,
+    "must_contain": [
+     "Bell-LaPadula",
+     "Biba",
+     "Clark-Wilson",
+     "Chinese Wall"
+    ]
+   },
+   {
+    "source": "信息安全支撑技术_V4.2",
+    "page": 60,
+    "must_contain": [
+     "Bell-Lapudula",
+     "Biba",
+     "Clark-Wilson",
+     "Chinese Wall"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "support_aaa_protocols",
+  "question": "AAA常见协议有哪些，RADIUS的升级版是什么？",
+  "query_type": "comparison",
+  "primary_domain": "信息安全支撑技术",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《安全支撑技术》知识点总结",
+    "page": 3,
+    "must_contain": [
+     "RADIUS",
+     "TACACS+",
+     "Diameter",
+     "升级版"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "network_stateful_firewall",
+  "question": "状态检测防火墙为什么能够根据连接状态放行数据包？",
+  "query_type": "mechanism",
+  "primary_domain": "物理与网络通信安全",
+  "evidence": [
+   {
+    "source": "物理与网络通信安全_V4.2",
+    "page": 46,
+    "must_contain": [
+     "状态检测",
+     "创建状态表",
+     "维护连接",
+     "通信和应用程序状态"
+    ]
+   },
+   {
+    "source": "物理与网络通信安全_V4.1",
+    "page": 54,
+    "must_contain": [
+     "状态检测",
+     "创建状态表",
+     "维护连接",
+     "通信和应用程序状态"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "network_ipsec_ah_esp",
+  "question": "IPSec中的AH和ESP分别提供什么安全能力？",
+  "query_type": "comparison",
+  "primary_domain": "物理与网络通信安全",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《物理网络安全》知识点总结",
+    "page": 6,
+    "must_contain": [
+     "IPSEC",
+     "AH",
+     "身份鉴别",
+     "完整性校验",
+     "ESP",
+     "加密"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "network_ids_detection",
+  "question": "IDS的误用检测和异常检测有什么区别？",
+  "query_type": "comparison",
+  "primary_domain": "物理与网络通信安全",
+  "evidence": [
+   {
+    "source": "物理与网络通信安全_V4.2",
+    "page": 52,
+    "must_contain": [
+     "误用检测",
+     "攻击特征",
+     "异常检测",
+     "正常",
+     "入侵行为"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "network_soc_functions",
+  "question": "SOC安全运营中心通常承担哪些核心功能？",
+  "query_type": "definition",
+  "primary_domain": "物理与网络通信安全",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《物理网络安全》知识点总结",
+    "page": 6,
+    "must_contain": [
+     "SOC",
+     "资产管理",
+     "事件分析",
+     "安全态势感知",
+     "安全配置"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "computing_xss",
+  "question": "跨站脚本攻击为什么会发生，服务器端应该怎样防范？",
+  "query_type": "mechanism",
+  "primary_domain": "计算环境安全",
+  "evidence": [
+   {
+    "source": "计算环境安全_v4.2",
+    "page": 45,
+    "must_contain": [
+     "跨站脚本",
+     "HTML代码",
+     "过滤",
+     "服务器端"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "computing_sql_injection",
+  "question": "SQL注入漏洞的本质是什么？",
+  "query_type": "mechanism",
+  "primary_domain": "计算环境安全",
+  "evidence": [
+   {
+    "source": "计算环境安全_v4.2",
+    "page": 43,
+    "must_contain": [
+     "SQL注入",
+     "用户输入",
+     "代码",
+     "数据与代码分离"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "computing_security_audit",
+  "question": "操作系统安全审计记录什么，它有什么作用？",
+  "query_type": "definition",
+  "primary_domain": "计算环境安全",
+  "evidence": [
+   {
+    "source": "计算环境安全_v4.2",
+    "page": 11,
+    "must_contain": [
+     "安全审计",
+     "记录",
+     "检查",
+     "独立",
+     "损失评估",
+     "不安全因素"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "computing_windows_identity",
+  "question": "Windows如何唯一标识用户，保存本地账号鉴别信息的文件是什么？",
+  "query_type": "fact",
+  "primary_domain": "计算环境安全",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《计算环境安全》知识点总结",
+    "page": 1,
+    "must_contain": [
+     "SID",
+     "唯一性",
+     "SAM",
+     "System"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "software_sdl_phases",
+  "question": "软件安全开发生命周期在哪些阶段引入安全活动？",
+  "query_type": "process",
+  "primary_domain": "软件安全开发",
+  "evidence": [
+   {
+    "source": "软件安全开发_V4.2",
+    "page": 16,
+    "must_contain": [
+     "需求分析",
+     "设计阶段",
+     "编码阶段",
+     "安全测试",
+     "运行维护"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "software_code_review",
+  "question": "代码安全审核的目的是什么，可以使用什么分析方法？",
+  "query_type": "definition",
+  "primary_domain": "软件安全开发",
+  "evidence": [
+   {
+    "source": "软件安全开发_V4.2",
+    "page": 43,
+    "must_contain": [
+     "代码安全审核",
+     "代码审查",
+     "源代码静态分析"
+    ]
+   },
+   {
+    "source": "软件安全开发_V4.2",
+    "page": 56,
+    "must_contain": [
+     "源代码审核",
+     "检查程序",
+     "错误和缺陷",
+     "人工审核",
+     "工具审核"
+    ]
+   },
+   {
+    "source": "软件安全开发_V4.1",
+    "page": 59,
+    "must_contain": [
+     "源代码审核",
+     "检查程序",
+     "错误和缺陷",
+     "人工审核",
+     "工具审核"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "software_penetration_test",
+  "question": "渗透测试的优点和局限分别是什么？",
+  "query_type": "comparison",
+  "primary_domain": "软件安全开发",
+  "evidence": [
+   {
+    "source": "软件安全开发_V4.2",
+    "page": 68,
+    "must_contain": [
+     "渗透测试",
+     "真实",
+     "严重",
+     "覆盖率较低"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "software_stride",
+  "question": "STRIDE威胁建模中的六类威胁分别是什么？",
+  "query_type": "acronym",
+  "primary_domain": "软件安全开发",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《软件安全开发》知识点总结",
+    "page": 2,
+    "must_contain": [
+     "STRIDE",
+     "欺骗",
+     "篡改",
+     "抵赖",
+     "信息泄露",
+     "拒绝服务",
+     "权限提升"
+    ]
+   },
+   {
+    "source": "软件安全开发_V4.2",
+    "page": 32,
+    "must_contain": [
+     "STRIDE",
+     "Spoofing",
+     "Tampering",
+     "Repudiation",
+     "Information",
+     "Denial of Service",
+     "Elevation of Privilege"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "assessment_risk_process",
+  "question": "信息安全风险评估通常包括哪四个阶段？",
+  "query_type": "process",
+  "primary_domain": "信息安全评估",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《信息安全评估》知识点总结",
+    "page": 1,
+    "must_contain": [
+     "风险评估过程",
+     "准备",
+     "要素识别",
+     "风险分析",
+     "结果判定"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "assessment_eal",
+  "question": "CC标准中的评估保证级EAL如何划分？",
+  "query_type": "acronym",
+  "primary_domain": "信息安全评估",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《信息安全评估》知识点总结",
+    "page": 1,
+    "must_contain": [
+     "EAL",
+     "EAL1",
+     "EAL7",
+     "评估对象",
+     "保护轮廓"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "assessment_risk_formula",
+  "question": "风险值计算涉及资产、威胁和脆弱性的哪些因素？",
+  "query_type": "mechanism",
+  "primary_domain": "信息安全评估",
+  "evidence": [
+   {
+    "source": "信息安全评估_V4.2",
+    "page": 52,
+    "must_contain": [
+     "风险值",
+     "资产",
+     "威胁",
+     "脆弱性",
+     "可能性",
+     "损失"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "assessment_tools",
+  "question": "风险评估与管理工具、基础平台工具和辅助工具分别做什么？",
+  "query_type": "comparison",
+  "primary_domain": "信息安全评估",
+  "evidence": [
+   {
+    "source": "信息安全评估_V4.2",
+    "page": 7,
+    "must_contain": [
+     "风险评估与管理工具",
+     "系统基础平台风险评估工具",
+     "风险评估辅助工具",
+     "脆弱性"
+    ]
+   },
+   {
+    "source": "信息安全评估_V4.1",
+    "page": 7,
+    "must_contain": [
+     "风险评估与管理工具",
+     "系统基础平台风险评估工具",
+     "风险评估辅助工具",
+     "脆弱性"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "operations_sse_cmm",
+  "question": "SSE-CMM是什么，用来衡量什么能力？",
+  "query_type": "definition",
+  "primary_domain": "安全工程与运营",
+  "evidence": [
+   {
+    "source": "安全工程与运营_V4.2",
+    "page": 15,
+    "must_contain": [
+     "SSE-CMM",
+     "衡量",
+     "SSE实施能力",
+     "过程改进"
+    ]
+   },
+   {
+    "source": "安全工程与运营_V4.1",
+    "page": 15,
+    "must_contain": [
+     "SSE-CMM",
+     "衡量",
+     "SSE实施能力",
+     "过程改进"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "operations_sse_cmm_structure",
+  "question": "SSE-CMM的域维由什么组成，过程区域分为哪三类？",
+  "query_type": "definition",
+  "primary_domain": "安全工程与运营",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《安全工程运营》知识点总结",
+    "page": 1,
+    "must_contain": [
+     "SSE-CMM 的内容",
+     "域维",
+     "过程区域",
+     "工程类",
+     "项目类",
+     "组织类"
+    ]
+   },
+   {
+    "source": "安全工程与运营_V4.1",
+    "page": 18,
+    "must_contain": [
+     "过程区域",
+     "22个PA",
+     "工程",
+     "项目",
+     "组织"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "operations_patch_management",
+  "question": "补丁管理从评估到归档要经过哪些步骤？",
+  "query_type": "process",
+  "primary_domain": "安全工程与运营",
+  "evidence": [
+   {
+    "source": "安全工程与运营_V4.2",
+    "page": 52,
+    "must_contain": [
+     "评估补丁",
+     "测试补丁",
+     "批准补丁",
+     "部署补丁",
+     "验证补丁",
+     "归档管理"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "operations_security_operations",
+  "question": "安全运营的核心工作是什么，它与IT运营是什么关系？",
+  "query_type": "definition",
+  "primary_domain": "安全工程与运营",
+  "evidence": [
+   {
+    "source": "安全工程与运营_V4.2",
+    "page": 47,
+    "must_contain": [
+     "安全运营",
+     "运行状况",
+     "监控",
+     "问题的根源",
+     "IT运营",
+     "相辅相成"
+    ]
+   },
+   {
+    "source": "安全工程与运营_V4.1",
+    "page": 47,
+    "must_contain": [
+     "安全运营",
+     "运行状况",
+     "监控",
+     "问题的根源",
+     "IT运营",
+     "相辅相成"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "continuity_incident_process",
+  "question": "信息安全事件从准备到总结的处置流程是什么？",
+  "query_type": "process",
+  "primary_domain": "业务连续性",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《业务连续性管理》知识点总结",
+    "page": 1,
+    "must_contain": [
+     "准备",
+     "检测",
+     "遏制",
+     "根除",
+     "恢复",
+     "跟踪总结"
+    ]
+   },
+   {
+    "source": "业务连续性_V4.2",
+    "page": 45,
+    "must_contain": [
+     "准备",
+     "检测",
+     "遏制",
+     "根除",
+     "恢复",
+     "跟踪总结"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "continuity_bia",
+  "question": "业务影响分析BIA主要分析什么，最终要确定哪些恢复目标？",
+  "query_type": "acronym",
+  "primary_domain": "业务连续性",
+  "evidence": [
+   {
+    "source": "业务连续性_V4.2",
+    "page": 64,
+    "must_contain": [
+     "业务影响分析",
+     "业务功能",
+     "中断影响",
+     "关键业务功能",
+     "RTO",
+     "RPO"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "continuity_rto_rpo",
+  "question": "RTO和RPO的区别是什么，一个衡量恢复时间还是数据丢失？",
+  "query_type": "comparison",
+  "primary_domain": "业务连续性",
+  "evidence": [
+   {
+    "source": "业务连续性_V4.2",
+    "page": 48,
+    "must_contain": [
+     "恢复点目标",
+     "允许丢失的数据量",
+     "恢复时间目标",
+     "必须恢复的时间"
+    ]
+   },
+   {
+    "source": "业务连续性_V4.1",
+    "page": 46,
+    "must_contain": [
+     "恢复点目标",
+     "允许丢失的数据量",
+     "恢复时间目标",
+     "必须恢复的时间"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "continuity_recovery_levels",
+  "question": "我国重要信息系统灾难恢复分为哪六级？",
+  "query_type": "process",
+  "primary_domain": "业务连续性",
+  "evidence": [
+   {
+    "source": "业务连续性_V4.2",
+    "page": 59,
+    "must_contain": [
+     "6个灾难恢复等级",
+     "第1级",
+     "第2级",
+     "第3级",
+     "第4级",
+     "第5级",
+     "第6级"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "management_isms_plan",
+  "question": "规划和建立ISMS需要完成哪些步骤？",
+  "query_type": "process",
+  "primary_domain": "信息安全管理",
+  "evidence": [
+   {
+    "source": "信息安全管理_V4.2",
+    "page": 22,
+    "must_contain": [
+     "定义ISMS范围",
+     "制定ISMS方针",
+     "风险评估",
+     "风险处理",
+     "残余风险",
+     "适用性声明"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "management_isms_do",
+  "question": "ISMS实施和运行阶段需要做哪些工作？",
+  "query_type": "process",
+  "primary_domain": "信息安全管理",
+  "evidence": [
+   {
+    "source": "信息安全管理_V4.2",
+    "page": 23,
+    "must_contain": [
+     "风险处理计划",
+     "有效性测量",
+     "培训和意识教育",
+     "管理ISMS的运行",
+     "管理ISMS的资源"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "management_measurement",
+  "question": "信息安全管理体系测量的目的是什么？",
+  "query_type": "definition",
+  "primary_domain": "信息安全管理",
+  "evidence": [
+   {
+    "source": "信息安全管理_V4.2",
+    "page": 52,
+    "must_contain": [
+     "测量的目的",
+     "无效的控制措施",
+     "符合程度",
+     "管理评审"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "management_document_hierarchy",
+  "question": "ISMS文档通常采用几层结构，高层和最底层分别包含什么？",
+  "query_type": "comparison",
+  "primary_domain": "信息安全管理",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《信息安全管理》知识点总结",
+    "page": 2,
+    "must_contain": [
+     "3 层或4 层结构",
+     "策略",
+     "手册",
+     "记录",
+     "表单"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "assessment_risk_h_range",
+  "question": "风险等级被评价为H时，其取值范围包括哪些分值？",
+  "query_type": "fact",
+  "primary_domain": "信息安全评估",
+  "evidence": [
+   {
+    "source": "信息安全评估_V4.2",
+    "page": 54,
+    "must_contain": [
+     "H",
+     "25,20",
+     "高风险"
+    ]
+   },
+   {
+    "source": "信息安全评估_V4.2",
+    "page": 39,
+    "must_contain": [
+     "H",
+     "25,20",
+     "High"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "assessment_risk_12_level",
+  "question": "风险赋值为12分属于哪个风险等级？",
+  "query_type": "fact",
+  "primary_domain": "信息安全评估",
+  "evidence": [
+   {
+    "source": "信息安全评估_V4.2",
+    "page": 54,
+    "must_contain": [
+     "严重风险"
+    ]
+   },
+   {
+    "source": "信息安全评估_V4.2",
+    "page": 39,
+    "must_contain": [
+     "严重风险"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "assessment_asset_value_top",
+  "question": "资产重要性赋值达到最高的5分代表什么含义？",
+  "query_type": "fact",
+  "primary_domain": "信息安全评估",
+  "evidence": [
+   {
+    "source": "信息安全评估_V4.2",
+    "page": 48,
+    "must_contain": [
+     "很高",
+     "非常重要"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "assessment_threat_freq_3",
+  "question": "威胁出现频率赋值为3代表出现频率是什么水平？",
+  "query_type": "fact",
+  "primary_domain": "信息安全评估",
+  "evidence": [
+   {
+    "source": "信息安全评估_V4.2",
+    "page": 49,
+    "must_contain": [
+     "出现的频率中等"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "regulation_mlps_level_public",
+  "question": "社会秩序、公共利益受到严重损害时，信息系统应定为第几级？",
+  "query_type": "fact",
+  "primary_domain": "信息安全监管",
+  "evidence": [
+   {
+    "source": "网络安全监管_v4.2",
+    "page": 52,
+    "must_contain": [
+     "第三级",
+     "社会秩序"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "regulation_gbt22239_parts",
+  "question": "GB/T 22239系列标准的各部分分别规定了什么？",
+  "query_type": "fact",
+  "primary_domain": "信息安全监管",
+  "evidence": [
+   {
+    "source": "网络安全监管_v4.2",
+    "page": 55,
+    "must_contain": [
+     "22239"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "network_tcp_checksum",
+  "question": "TCP包头中的校验和字段占多少位？",
+  "query_type": "fact",
+  "primary_domain": "物理与网络通信安全",
+  "evidence": [
+   {
+    "source": "物理与网络通信安全_V4.2",
+    "page": 22,
+    "must_contain": [
+     "16位校验和"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "assurance_security_attributes",
+  "question": "信息安全的基本属性通常包括哪三项？",
+  "query_type": "definition",
+  "primary_domain": "信息安全保障",
+  "evidence": [
+   {
+    "source": "信息安全保障_V4.2",
+    "page": 8,
+    "must_contain": [
+     "信息安全属性",
+     "基本属性",
+     "保密性",
+     "完整性",
+     "可用性"
+    ]
+   },
+   {
+    "source": "信息安全保障_V4.1",
+    "page": 11,
+    "must_contain": [
+     "信息安全属性",
+     "基本属性",
+     "保密性",
+     "完整性",
+     "可用性"
+    ]
+   },
+   {
+    "source": "CISP 4.2版本《信息安全保障》知识点总结",
+    "page": 1,
+    "must_contain": [
+     "信息安全属性",
+     "保密性",
+     "完整性",
+     "可用性"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "assurance_problem_classification",
+  "question": "信息安全问题可分为狭义和广义两类，它们分别侧重什么，根源包括哪些？",
+  "query_type": "comparison",
+  "primary_domain": "信息安全保障",
+  "evidence": [
+   {
+    "source": "信息安全保障_V4.2",
+    "page": 7,
+    "must_contain": [
+     "信息安全视角",
+     "国家视角",
+     "企业视角",
+     "个人视角"
+    ]
+   },
+   {
+    "source": "CISP 4.2版本《信息安全保障》知识点总结",
+    "page": 1,
+    "must_contain": [
+     "信息问题分类",
+     "狭义",
+     "技术",
+     "广义",
+     "业务",
+     "内因",
+     "外因"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "assurance_security_views",
+  "question": "理解信息安全时通常有哪些视角？",
+  "query_type": "definition",
+  "primary_domain": "信息安全保障",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《信息安全保障》知识点总结",
+    "page": 1,
+    "must_contain": [
+     "信息安全视角",
+     "国家",
+     "企业",
+     "个人"
+    ]
+   },
+   {
+    "source": "信息安全保障_V4.2",
+    "page": 7,
+    "must_contain": [
+     "信息安全视角",
+     "国家视角",
+     "企业视角",
+     "个人视角"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "assurance_development_stages",
+  "question": "信息安全发展经历了哪些阶段？",
+  "query_type": "process",
+  "primary_domain": "信息安全保障",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《信息安全保障》知识点总结",
+    "page": 1,
+    "must_contain": [
+     "信息安全发展",
+     "通信安全",
+     "计算机安全",
+     "信息系统安全",
+     "信息安全保障",
+     "网络空间安全"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "regulation_cybercrime_categories",
+  "question": "计算机犯罪的狭义和广义概念有什么区别，常见特点有哪些？",
+  "query_type": "comparison",
+  "primary_domain": "信息安全监管",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《信息安全监管》知识点总结",
+    "page": 1,
+    "must_contain": [
+     "计算机犯罪",
+     "狭义",
+     "广义",
+     "多样性",
+     "复杂化",
+     "国际化",
+     "不对称性"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "regulation_cybersecurity_law_chapters",
+  "question": "《网络安全法》的主要章节结构包括哪些？",
+  "query_type": "fact",
+  "primary_domain": "信息安全监管",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《信息安全监管》知识点总结",
+    "page": 1,
+    "must_contain": [
+     "网络安全法",
+     "总则",
+     "网络安全支持与促进",
+     "网络运行安全",
+     "网络信息安全",
+     "法律责任",
+     "附则"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "support_hash_function_properties",
+  "question": "哈希函数有什么作用，常见算法和数学性质有哪些？",
+  "query_type": "definition",
+  "primary_domain": "信息安全支撑技术",
+  "evidence": [
+   {
+    "source": "信息安全支撑技术_V4.2",
+    "page": 21,
+    "must_contain": [
+     "哈希函数",
+     "完整性校验",
+     "MD5",
+     "SHA-1",
+     "单向性",
+     "雪崩效应"
+    ]
+   },
+   {
+    "source": "信息安全支撑技术_V4.1",
+    "page": 15,
+    "must_contain": [
+     "哈希函数",
+     "数据完整性检查",
+     "MD5",
+     "SHA-1",
+     "单向性",
+     "强抗碰撞性"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "support_digital_signature_roles",
+  "question": "数字签名能确认什么，主要作用有哪些？",
+  "query_type": "definition",
+  "primary_domain": "信息安全支撑技术",
+  "evidence": [
+   {
+    "source": "信息安全支撑技术_V4.2",
+    "page": 23,
+    "must_contain": [
+     "数字签名",
+     "确认数据单元来源",
+     "完整性",
+     "不可伪造性",
+     "不可否认性"
+    ]
+   },
+   {
+    "source": "信息安全支撑技术_V4.1",
+    "page": 17,
+    "must_contain": [
+     "数字签名",
+     "确认数据单元来源",
+     "完整性",
+     "不可伪造性",
+     "不可否认性"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "support_pki_components",
+  "question": "PKI体系主要由哪些元素组成？",
+  "query_type": "definition",
+  "primary_domain": "信息安全支撑技术",
+  "evidence": [
+   {
+    "source": "信息安全支撑技术_V4.2",
+    "page": 24,
+    "must_contain": [
+     "PKI体系元素",
+     "CA",
+     "RA",
+     "证书/CRL库",
+     "终端实体"
+    ]
+   },
+   {
+    "source": "信息安全支撑技术_V4.1",
+    "page": 18,
+    "must_contain": [
+     "PKI体系组成",
+     "CA",
+     "RA",
+     "证书存放管理",
+     "终端实体"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "support_kerberos_components",
+  "question": "Kerberos体系由哪些核心组件构成，KDC包含哪两部分？",
+  "query_type": "acronym",
+  "primary_domain": "信息安全支撑技术",
+  "evidence": [
+   {
+    "source": "信息安全支撑技术_V4.2",
+    "page": 48,
+    "must_contain": [
+     "Kerberos体系构成",
+     "KDC",
+     "AS",
+     "TGS",
+     "TGT",
+     "SGT"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "network_firewall_type_comparison",
+  "question": "防火墙常见类型有哪些，包过滤、电路代理和应用代理分别处在哪些层次？",
+  "query_type": "comparison",
+  "primary_domain": "物理与网络通信安全",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《物理网络安全》知识点总结",
+    "page": 3,
+    "must_contain": [
+     "包过滤防火墙",
+     "电路代理防火墙",
+     "应用代理防火墙",
+     "三层",
+     "3-7层"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "network_ids_components",
+  "question": "入侵检测系统通常由哪些组成部分构成？",
+  "query_type": "definition",
+  "primary_domain": "物理与网络通信安全",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《物理网络安全》知识点总结",
+    "page": 5,
+    "must_contain": [
+     "入侵检测系统",
+     "事件产生器",
+     "事件分析",
+     "事件响应",
+     "数据库"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "network_ipsec_modes",
+  "question": "IPSec有哪些工作模式，分别也被称作什么模式？",
+  "query_type": "comparison",
+  "primary_domain": "物理与网络通信安全",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《物理网络安全》知识点总结",
+    "page": 6,
+    "must_contain": [
+     "IPSEC",
+     "传输模式",
+     "透明模式",
+     "隧道模式",
+     "路由模式"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "computing_os_secure_config",
+  "question": "操作系统安全配置在安装和部署时有哪些要点？",
+  "query_type": "process",
+  "primary_domain": "计算环境安全",
+  "evidence": [
+   {
+    "source": "计算环境安全_v4.2",
+    "page": 13,
+    "must_contain": [
+     "操作系统安全配置",
+     "安全补丁",
+     "最小化部署",
+     "远程访问控制"
+    ]
+   },
+   {
+    "source": "计算环境安全_v4.1",
+    "page": 13,
+    "must_contain": [
+     "操作系统安全配置",
+     "安全补丁",
+     "最小化部署",
+     "远程访问控制"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "computing_buffer_overflow_principle",
+  "question": "缓冲区溢出攻击的基本原理是什么，会破坏什么？",
+  "query_type": "mechanism",
+  "primary_domain": "计算环境安全",
+  "evidence": [
+   {
+    "source": "计算环境安全_v4.2",
+    "page": 22,
+    "must_contain": [
+     "缓冲区溢出攻击原理",
+     "超过预定长度",
+     "破坏程序的堆栈",
+     "执行流程"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "computing_buffer_overflow_defense",
+  "question": "缓冲区溢出可以从用户、开发人员和系统三个层面怎样防范？",
+  "query_type": "process",
+  "primary_domain": "计算环境安全",
+  "evidence": [
+   {
+    "source": "计算环境安全_v4.2",
+    "page": 28,
+    "must_contain": [
+     "缓冲区溢出的防范",
+     "补丁",
+     "防火墙",
+     "编写安全代码",
+     "缓冲区不可执行技术",
+     "虚拟化技术"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "computing_database_defense_mechanisms",
+  "question": "数据库安全防护中的深度防御体系包含哪些安全机制和策略？",
+  "query_type": "definition",
+  "primary_domain": "计算环境安全",
+  "evidence": [
+   {
+    "source": "计算环境安全_v4.2",
+    "page": 52,
+    "must_contain": [
+     "数据库安全防护",
+     "深度防御体系",
+     "标识与鉴别",
+     "访问控制",
+     "传输加密",
+     "审计",
+     "密码策略",
+     "备份策略"
+    ]
+   },
+   {
+    "source": "计算环境安全_v4.1",
+    "page": 59,
+    "must_contain": [
+     "数据库安全防护",
+     "深度防御体系",
+     "标识与鉴别",
+     "访问控制",
+     "传输加密",
+     "审计",
+     "密码策略",
+     "备份策略"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "software_lifecycle_models",
+  "question": "典型软件生命周期模型包括哪些？",
+  "query_type": "definition",
+  "primary_domain": "软件安全开发",
+  "evidence": [
+   {
+    "source": "软件安全开发_V4.2",
+    "page": 5,
+    "must_contain": [
+     "瀑布模型",
+     "迭代模型",
+     "增量模型",
+     "快速原型模型",
+     "螺旋模型",
+     "净室模型"
+    ]
+   },
+   {
+    "source": "软件安全开发_V4.1",
+    "page": 4,
+    "must_contain": [
+     "瀑布模型",
+     "迭代模型",
+     "增量模型",
+     "快速原型模型",
+     "螺旋模型",
+     "净室模型"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "software_threat_modeling_process",
+  "question": "威胁建模流程通常包括哪四步？",
+  "query_type": "process",
+  "primary_domain": "软件安全开发",
+  "evidence": [
+   {
+    "source": "软件安全开发_V4.2",
+    "page": 29,
+    "must_contain": [
+     "威胁建模流程",
+     "确定对象",
+     "识别威胁",
+     "评估威胁",
+     "消减威胁"
+    ]
+   },
+   {
+    "source": "软件安全开发_V4.1",
+    "page": 29,
+    "must_contain": [
+     "威胁建模流程",
+     "确定对象",
+     "识别威胁",
+     "评估威胁",
+     "消减威胁"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "software_security_design_principles",
+  "question": "软件安全设计有哪些典型原则？",
+  "query_type": "definition",
+  "primary_domain": "软件安全开发",
+  "evidence": [
+   {
+    "source": "软件安全开发_V4.2",
+    "page": 38,
+    "must_contain": [
+     "安全设计原则",
+     "最小特权原则",
+     "权限分离原则",
+     "纵深防御原则",
+     "公开设计原则",
+     "攻击面最小化原则"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "software_attack_surface_reduction",
+  "question": "降低软件受攻击面通常有哪些方法？",
+  "query_type": "process",
+  "primary_domain": "软件安全开发",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《软件安全开发》知识点总结",
+    "page": 2,
+    "must_contain": [
+     "受攻击面",
+     "分析产品的功能",
+     "哪些路径",
+     "访问的特权",
+     "增强防护措施"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "operations_security_engineering_definition",
+  "question": "安全工程的定义是什么，它研究和维护的对象是什么？",
+  "query_type": "definition",
+  "primary_domain": "安全工程与运营",
+  "evidence": [
+   {
+    "source": "安全工程与运营_V4.2",
+    "page": 4,
+    "must_contain": [
+     "采用工程的概念",
+     "研究",
+     "开发",
+     "实施",
+     "维护信息系统安全"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "operations_security_engineering_principles",
+  "question": "安全工程应遵循哪些基本原则？",
+  "query_type": "definition",
+  "primary_domain": "安全工程与运营",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《安全工程运营》知识点总结",
+    "page": 1,
+    "must_contain": [
+     "安全工程的原则",
+     "全生命周期",
+     "同步规划",
+     "建设",
+     "使用"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "operations_change_management_process",
+  "question": "变更管理一般包括哪些步骤？",
+  "query_type": "process",
+  "primary_domain": "安全工程与运营",
+  "evidence": [
+   {
+    "source": "安全工程与运营_V4.2",
+    "page": 53,
+    "must_contain": [
+     "变更管理的过程",
+     "提交变更申请",
+     "变更审核",
+     "变更批准",
+     "变更实施",
+     "变更记录"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "operations_capability_level_2",
+  "question": "SSE-CMM能力级别2级包含哪些公共特征？",
+  "query_type": "fact",
+  "primary_domain": "安全工程与运营",
+  "evidence": [
+   {
+    "source": "安全工程与运营_V4.2",
+    "page": 42,
+    "must_contain": [
+     "规划和跟踪级",
+     "规划执行",
+     "规范化执行",
+     "配置管理",
+     "跟踪执行",
+     "验证执行"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "continuity_event_categories",
+  "question": "信息安全事件通常分为哪些类别？",
+  "query_type": "definition",
+  "primary_domain": "业务连续性",
+  "evidence": [
+   {
+    "source": "业务连续性_V4.2",
+    "page": 24,
+    "must_contain": [
+     "有害程序事件",
+     "网络攻击",
+     "信息破坏",
+     "信息内容安全事件",
+     "设备设施故障"
+    ]
+   },
+   {
+    "source": "CISP 4.2版本《业务连续性管理》知识点总结",
+    "page": 1,
+    "must_contain": [
+     "有害程序事件",
+     "网络攻击事件",
+     "信息破坏事件",
+     "信息内容事件",
+     "设备设施"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "continuity_event_levels",
+  "question": "信息安全事件按影响程度分为哪四级？",
+  "query_type": "fact",
+  "primary_domain": "业务连续性",
+  "evidence": [
+   {
+    "source": "业务连续性_V4.2",
+    "page": 25,
+    "must_contain": [
+     "特别重大事件",
+     "重大事件",
+     "较大事件",
+     "一般事件"
+    ]
+   },
+   {
+    "source": "业务连续性_V4.1",
+    "page": 25,
+    "must_contain": [
+     "特别重大事件",
+     "重大事件",
+     "较大事件",
+     "一般事件"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "continuity_backup_types",
+  "question": "完整备份、差分备份和增量备份有什么区别？",
+  "query_type": "comparison",
+  "primary_domain": "业务连续性",
+  "evidence": [
+   {
+    "source": "CISP 4.2版本《业务连续性管理》知识点总结",
+    "page": 2,
+    "must_contain": [
+     "完整备份",
+     "差分备份",
+     "增量备份",
+     "数据全部备份",
+     "备份基线"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "continuity_standby_sites",
+  "question": "备用场所通常包括哪些类型？",
+  "query_type": "definition",
+  "primary_domain": "业务连续性",
+  "evidence": [
+   {
+    "source": "业务连续性_V4.2",
+    "page": 56,
+    "must_contain": [
+     "冷站",
+     "温站",
+     "热站",
+     "移动站",
+     "镜像站"
+    ]
+   },
+   {
+    "source": "业务连续性_V4.1",
+    "page": 54,
+    "must_contain": [
+     "冷站",
+     "温站",
+     "热站",
+     "移动站",
+     "镜像站"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "management_isms_definition",
+  "question": "信息安全管理体系由哪些方针、目标、方法和资源构成？",
+  "query_type": "definition",
+  "primary_domain": "信息安全管理",
+  "evidence": [
+   {
+    "source": "信息安全管理_V4.1",
+    "page": 19,
+    "must_contain": [
+     "信息安全管理体系",
+     "方针",
+     "目标",
+     "方法",
+     "计划",
+     "活动",
+     "程序",
+     "过程",
+     "资源"
+    ]
+   },
+   {
+    "source": "信息安全管理_V4.2",
+    "page": 16,
+    "must_contain": [
+     "信息安全管理体系",
+     "方针",
+     "原则",
+     "目标",
+     "方法",
+     "计划",
+     "活动",
+     "程序",
+     "过程",
+     "资源"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "management_pdca_cycle",
+  "question": "PDCA过程方法的四个阶段分别是什么，它强调什么改进方式？",
+  "query_type": "acronym",
+  "primary_domain": "信息安全管理",
+  "evidence": [
+   {
+    "source": "信息安全管理_V4.2",
+    "page": 19,
+    "must_contain": [
+     "PDCA过程方法",
+     "Plan",
+     "Do",
+     "Check",
+     "Act",
+     "持续改进"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "management_monitor_review_isms",
+  "question": "监视和评审ISMS阶段需要做哪些工作？",
+  "query_type": "process",
+  "primary_domain": "信息安全管理",
+  "evidence": [
+   {
+    "source": "信息安全管理_V4.2",
+    "page": 24,
+    "must_contain": [
+     "日常监视和检查",
+     "有效性测量",
+     "内部审核",
+     "风险再评估",
+     "管理评审"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "management_risk_treatment_authorization",
+  "question": "规划建立ISMS时，风险处理和管理者批准授权涉及哪些步骤？",
+  "query_type": "process",
+  "primary_domain": "信息安全管理",
+  "evidence": [
+   {
+    "source": "信息安全管理_V4.2",
+    "page": 22,
+    "must_contain": [
+     "选择、评价和确定风险处理方式",
+     "残余风险",
+     "管理者",
+     "实施和运行ISMS",
+     "适用性声明"
+    ]
+   }
+  ]
+ }
+]

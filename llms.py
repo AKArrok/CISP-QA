@@ -1,6 +1,8 @@
 """LLM and embedding instances — ported from AniRAG (trimmed: no Pinecone/Tavily/local models)."""
+import hashlib
 import json
 import logging
+import os
 import random
 import threading
 import time
@@ -235,13 +237,45 @@ class DashScopeEmbeddings(Embeddings):
             raise EnvironmentError(
                 "DASHSCOPE_WORKSPACE_ID or DASHSCOPE_EMBEDDING_BASE_URL is required"
             )
-        self.client = OpenAI(api_key=api_key, base_url=base_url)
+        self.client = OpenAI(api_key=api_key, base_url=base_url,
+                             timeout=config.EMBEDDING_CLIENT_TIMEOUT)
         self.model = model
         self.dimension = dimension
         self.request_interval = config.DASHSCOPE_EMBEDDING_REQUEST_INTERVAL
         self.max_retries = config.DASHSCOPE_EMBEDDING_MAX_RETRIES
         self.max_backoff = config.DASHSCOPE_EMBEDDING_MAX_BACKOFF
         self._last_request_at = 0.0
+        self._cache: dict[str, List[float]] | None = None
+        self._cache_lock = threading.Lock()
+
+    # ── 磁盘缓存：按 model+dim+文本哈希复用向量，评测/重建索引不重复计费 ──
+
+    def _cache_key(self, text: str) -> str:
+        return hashlib.md5(f"{self.model}|{self.dimension}|{text}".encode()).hexdigest()
+
+    def _load_cache(self) -> dict[str, List[float]]:
+        if self._cache is not None:
+            return self._cache
+        with self._cache_lock:
+            if self._cache is None:
+                cache: dict[str, List[float]] = {}
+                if os.path.exists(config.EMBEDDING_CACHE_PATH):
+                    try:
+                        with open(config.EMBEDDING_CACHE_PATH, encoding="utf-8") as fp:
+                            cache = json.load(fp)
+                    except Exception:
+                        logging.warning("embedding 缓存文件损坏，忽略并重建: %s",
+                                        config.EMBEDDING_CACHE_PATH)
+                self._cache = cache
+        return self._cache
+
+    def _save_cache(self) -> None:
+        # 多进程并发下 last-write-wins：丢条目只是下次重新计费一次，不影响正确性。
+        tmp_path = config.EMBEDDING_CACHE_PATH + ".tmp"
+        os.makedirs(os.path.dirname(config.EMBEDDING_CACHE_PATH), exist_ok=True)
+        with open(tmp_path, "w", encoding="utf-8") as fp:
+            json.dump(self._cache, fp)
+        os.replace(tmp_path, config.EMBEDDING_CACHE_PATH)
 
     @property
     def active_model(self) -> str:
@@ -285,15 +319,202 @@ class DashScopeEmbeddings(Embeddings):
             raise ValueError(
                 f"DashScope embedding dimension {self.dimension} does not match target {expected_dim}."
             )
-        vectors: List[List[float]] = []
-        # qwen3.7-text-embedding 的文本列表单次最多 20 条。
-        for start in range(0, len(texts), 20):
-            response = self._create_embeddings(texts[start:start + 20])
-            vectors.extend(item.embedding for item in response.data)
-        return vectors
+        if not texts:
+            return []
+        use_cache = config.EMBEDDING_CACHE_ENABLED
+        cache = self._load_cache() if use_cache else None
+        vectors: List[List[float] | None] = [None] * len(texts)
+        missing: list[int] = []
+        for index, text in enumerate(texts):
+            if cache is not None:
+                cached = cache.get(self._cache_key(text))
+                if cached is not None:
+                    vectors[index] = cached
+                    continue
+            missing.append(index)
+        if missing:
+            batch_texts = [texts[index] for index in missing]
+            new_vectors: List[List[float]] = []
+            # qwen3.7-text-embedding 的文本列表单次最多 20 条。
+            for start in range(0, len(batch_texts), 20):
+                response = self._create_embeddings(batch_texts[start:start + 20])
+                new_vectors.extend(item.embedding for item in response.data)
+            for index, vector in zip(missing, new_vectors, strict=True):
+                vectors[index] = vector
+                if cache is not None:
+                    cache[self._cache_key(texts[index])] = vector
+            if cache is not None:
+                self._save_cache()
+        return vectors  # type: ignore[return-value]
 
     def embed_query(self, text: str, target_dim: int | None = None) -> List[float]:
         return self.embed_documents([text], target_dim=target_dim)[0]
+
+
+# ══════════════════════════════════════════════════════════════════════
+# DashScope Text Rerank（qwen3.7-text-rerank，原生 rerank 端点，独立计费）
+# ══════════════════════════════════════════════════════════════════════
+
+class DashScopeReranker:
+    """百炼 text-rerank API 客户端：query 与文档列表 → 相关性分数。
+
+    走原生 rerank 端点（非 OpenAI 兼容），与 embedding 分开计费；
+    embedding 额度耗尽不影响本通道。
+    """
+
+    def __init__(self, api_key: str, base_url: str, model: str):
+        if not api_key:
+            raise EnvironmentError(
+                "DASHSCOPE_API_KEY is required when RERANK_BACKEND=dashscope"
+            )
+        if not base_url:
+            raise EnvironmentError("DASHSCOPE_RERANK_BASE_URL is required")
+        import httpx
+
+        self.model = model
+        self._client = httpx.Client(timeout=30.0)
+        self._url = base_url.rstrip("/") + "/services/rerank/text-rerank/text-rerank"
+        self._headers = {"Authorization": f"Bearer {api_key}",
+                         "Content-Type": "application/json"}
+        self.request_interval = config.DASHSCOPE_RERANK_REQUEST_INTERVAL
+        self.max_retries = config.DASHSCOPE_RERANK_MAX_RETRIES
+        self.max_backoff = config.DASHSCOPE_RERANK_MAX_BACKOFF
+        self._last_request_at = 0.0
+        self._cache: dict[str, float] | None = None
+        self._cache_lock = threading.Lock()
+
+    # ── 磁盘缓存：精排对每个 (query, 文档) 对打分独立，按对缓存复用 ──
+
+    def _cache_key(self, query: str, document: str) -> str:
+        return hashlib.md5(
+            f"{self.model}|{query}|{document}".encode()).hexdigest()
+
+    def _load_cache(self) -> dict[str, float]:
+        if self._cache is not None:
+            return self._cache
+        with self._cache_lock:
+            if self._cache is None:
+                cache: dict[str, float] = {}
+                if os.path.exists(config.RERANK_CACHE_PATH):
+                    try:
+                        with open(config.RERANK_CACHE_PATH, encoding="utf-8") as fp:
+                            cache = json.load(fp)
+                    except Exception:
+                        logging.warning("rerank 缓存文件损坏，忽略并重建: %s",
+                                        config.RERANK_CACHE_PATH)
+                self._cache = cache
+        return self._cache
+
+    def _save_cache(self) -> None:
+        # 多进程并发下 last-write-wins：丢条目只是下次多计费一次，不影响正确性。
+        tmp_path = config.RERANK_CACHE_PATH + ".tmp"
+        os.makedirs(os.path.dirname(config.RERANK_CACHE_PATH), exist_ok=True)
+        with open(tmp_path, "w", encoding="utf-8") as fp:
+            json.dump(self._cache, fp)
+        os.replace(tmp_path, config.RERANK_CACHE_PATH)
+
+    @property
+    def model_identity(self) -> str:
+        return f"dashscope:{self.model}"
+
+    def _wait_for_request_slot(self) -> None:
+        remaining = self.request_interval - (time.monotonic() - self._last_request_at)
+        if remaining > 0:
+            time.sleep(remaining)
+
+    def _post(self, query: str, documents: List[str], top_n: int) -> dict:
+        payload = {
+            "model": self.model,
+            "input": {"query": query, "documents": documents},
+            "parameters": {"top_n": min(top_n, len(documents)),
+                           "return_documents": False},
+        }
+        for attempt in range(self.max_retries + 1):
+            self._wait_for_request_slot()
+            try:
+                response = self._client.post(self._url, json=payload, headers=self._headers)
+            except httpx.HTTPError:
+                status_code = None
+                error_body = ""
+            else:
+                status_code = response.status_code
+                if status_code == 200:
+                    return response.json()
+                error_body = response.text[:300]
+            retryable = status_code is None or status_code == 429
+            if not retryable or attempt >= self.max_retries:
+                raise RuntimeError(
+                    f"DashScope rerank 请求失败 status={status_code}: {error_body}"
+                )
+            delay = min(max(self.request_interval, 2 ** attempt), self.max_backoff)
+            delay += random.uniform(0, 0.5)
+            logging.warning("DashScope rerank 请求失败，%.1f 秒后重试 (%d/%d)",
+                            delay, attempt + 1, self.max_retries)
+            time.sleep(delay)
+        raise RuntimeError("DashScope rerank 请求失败：重试次数耗尽")
+
+    @staticmethod
+    def _map_results(payload: dict, num_documents: int) -> List[float]:
+        scores = [0.0] * num_documents
+        for item in payload["output"]["results"]:
+            scores[item["index"]] = float(item["relevance_score"])
+        return scores
+
+    def rerank(self, query: str, documents: List[str], top_n: int | None = None) -> List[float]:
+        """返回与 documents 等长的相关性分数（未返回的文档记 0 分）。
+
+        精排对每个 (query, 文档) 对独立打分：命中缓存的直接复用，
+        只对缺失的文档发起一次批量请求，结果按对落盘。
+        """
+        top_n = len(documents) if top_n is None else min(top_n, len(documents))
+        use_cache = config.RERANK_CACHE_ENABLED
+        cache = self._load_cache() if use_cache else None
+        scores: List[float | None] = [None] * len(documents)
+        missing: list[int] = []
+        for index, document in enumerate(documents):
+            if cache is not None:
+                cached = cache.get(self._cache_key(query, document))
+                if cached is not None:
+                    scores[index] = cached
+                    continue
+            missing.append(index)
+        if missing:
+            batch_documents = [documents[index] for index in missing]
+            payload = self._post(query, batch_documents, len(batch_documents))
+            self._last_request_at = time.monotonic()
+            batch_scores = self._map_results(payload, len(batch_documents))
+            for index, score in zip(missing, batch_scores, strict=True):
+                scores[index] = score
+                if cache is not None:
+                    cache[self._cache_key(query, documents[index])] = score
+            if cache is not None:
+                self._save_cache()
+        return scores  # type: ignore[return-value]
+
+
+_reranker = None
+_reranker_lock = threading.Lock()
+
+
+def get_reranker() -> DashScopeReranker:
+    global _reranker
+    if _reranker is not None:
+        return _reranker
+    with _reranker_lock:
+        if _reranker is None:
+            if config.RERANK_BACKEND == "dashscope":
+                _reranker = DashScopeReranker(
+                    api_key=config.DASHSCOPE_API_KEY,
+                    base_url=config.DASHSCOPE_RERANK_BASE_URL,
+                    model=config.DASHSCOPE_RERANK_MODEL,
+                )
+            else:
+                raise ValueError(
+                    f"Unsupported RERANK_BACKEND={config.RERANK_BACKEND!r}; "
+                    "expected dashscope or local."
+                )
+            logging.info("  Reranker: %s", _reranker.model_identity)
+        return _reranker
 
 
 # ══════════════════════════════════════════════════════════════════════

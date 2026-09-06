@@ -3,11 +3,12 @@ from __future__ import annotations
 
 import json
 import logging
+import time
 
 from sqlalchemy import func, select
 
 from storage import db
-from storage.models import Attempt, KBChunk, Question
+from storage.models import Attempt, KBChunk, Question, QuestionSignal
 
 logger = logging.getLogger(__name__)
 
@@ -124,3 +125,57 @@ def attempt_rows() -> list[tuple[str, int, float]]:
             .where(Attempt.domain.is_not(None))
         ).all()
     return [(d, bool(c), float(t)) for d, c, t in rows]
+
+
+def last_wrong_choice(question_id: str) -> str | None:
+    """某题最近一次答错时用户选的选项（定向出题的干扰项依据）。"""
+    with db.session() as s:
+        stmt = (select(Attempt.choice)
+                .where(Attempt.question_id == question_id, Attempt.correct.is_(False))
+                .order_by(Attempt.answered_at.desc())
+                .limit(1))
+        return s.scalar(stmt)
+
+
+def recent_wrong_attempts(domain: str, limit: int = 5) -> list[dict]:
+    """某域最近答错的题（去重取每题最后一次），定向出题的锚点。"""
+    with db.session() as s:
+        rows = s.execute(
+            select(Attempt.question_id, Attempt.stem, Attempt.choice, Attempt.answered_at)
+            .where(Attempt.domain == domain, Attempt.correct.is_(False))
+            .order_by(Attempt.answered_at.desc())
+            .limit(limit * 3)
+        ).all()
+    seen: set[str] = set()
+    out = []
+    for qid, stem, choice, at in rows:
+        if qid in seen:
+            continue
+        seen.add(qid)
+        out.append({"question_id": qid, "stem": stem or "", "choice": choice, "answered_at": at})
+        if len(out) >= limit:
+            break
+    return out
+
+
+# ── 提问信号（问答侧薄弱信号）────────────────────────────────────────────
+
+def record_question_signal(thread_id: str, question: str,
+                           domain: str | None, intent: str | None) -> None:
+    with db.session() as s:
+        s.add(QuestionSignal(thread_id=thread_id, question=question[:2000],
+                             domain=domain, intent=intent, created_at=time.time()))
+        s.commit()
+
+
+def signal_rows() -> list[tuple[str, int, float]]:
+    """[(知识域, 提问次数, 最近提问时间戳)]，画像融合用（仅已有域标签的）。"""
+    with db.session() as s:
+        rows = s.execute(
+            select(QuestionSignal.domain,
+                   func.count().label("n"),
+                   func.max(QuestionSignal.created_at).label("last"))
+            .where(QuestionSignal.domain.is_not(None))
+            .group_by(QuestionSignal.domain)
+        ).all()
+    return [(d, int(n), float(last)) for d, n, last in rows]

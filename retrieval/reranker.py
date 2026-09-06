@@ -1,7 +1,11 @@
-"""精排：bge-reranker-v2-m3 交叉编码器，对混合检索的候选重排序。
+"""精排：对混合检索的候选做 query 相关性重排序。
 
-CPU 上对 10-20 个候选约需数秒，调用方应放在线程池（hybrid 检索已被 to_thread 包裹）。
-模型下载失败/加载失败时优雅降级：跳过精排，保持 RRF 顺序。
+后端由 RERANK_BACKEND 决定：
+- "dashscope"：qwen3.7-text-rerank API（独立计费额度，延迟约百毫秒级）；
+- "local"：bge-reranker-v2-m3 交叉编码器（CPU 上 10-20 个候选约数秒，
+  调用方应放在线程池，hybrid 检索已被 to_thread 包裹）。
+
+任何后端失败都优雅降级：跳过精排，保持 RRF 顺序。
 """
 from __future__ import annotations
 
@@ -14,6 +18,10 @@ _lock = threading.Lock()
 _predict_gate = threading.Semaphore(1)  # CPU 重排序串行化，避免并发互相拖垮
 _cross_encoder = None
 _failed = False
+
+
+def _candidate_text(chunk: dict) -> str:
+    return chunk.get("embedding_text") or chunk.get("child_text") or chunk["text"]
 
 
 def _get_encoder():
@@ -34,22 +42,61 @@ def _get_encoder():
     return _cross_encoder
 
 
+def _rerank_remote(query: str, candidates: list[dict]) -> list[float]:
+    """返回与 candidates 顺序对齐的精排分（不在这里排序，融合需要原始特征序）。"""
+    from llms import get_reranker
+
+    return [float(s) for s in get_reranker().rerank(query, [_candidate_text(c) for c in candidates])]
+
+
+def _rerank_local(query: str, candidates: list[dict]) -> list[float] | None:
+    encoder = _get_encoder()
+    if encoder is None:
+        return None
+    pairs = [[query, _candidate_text(c)] for c in candidates]
+    with _predict_gate:
+        scores = encoder.predict(pairs, show_progress_bar=False)
+    return [float(s) for s in scores]
+
+
+def _fuse_order(scores: list[float], n: int, alpha: float) -> list[int]:
+    """特征序（输入列表顺序）与精排分的加权融合：α·精排分 + (1-α)·特征名次。
+
+    两侧各做集合内归一：精排分 min-max，特征名次线性。平局保持特征序。
+    α=1 退化为纯精排序，α=0 退化为纯特征序。
+    """
+    r_min, r_max = min(scores), max(scores)
+    span = (r_max - r_min) or 1.0
+    fused = []
+    for i, score in enumerate(scores):
+        r_norm = (score - r_min) / span
+        f_norm = (n - i) / max(n - 1, 1)
+        fused.append(-(alpha * r_norm + (1 - alpha) * f_norm))
+    return sorted(range(n), key=lambda i: (fused[i], i))
+
+
 def rerank(query: str, candidates: list[dict], top_k: int) -> list[dict]:
-    """对候选拿 query 相关性重排序，返回 top-k（失败时原序截断）。"""
+    """对候选拿 query 相关性重排序，返回 top-k（失败时原序截断）。
+
+    输入列表已是特征重排后的顺序；RERANK_FUSION=alpha 时按
+    RERANK_FUSION_ALPHA 与特征名次加权融合，replace 为纯精排序。
+    """
     if not candidates:
         return []
-    encoder = _get_encoder()
-    if encoder is None or len(candidates) == 1:
+    if len(candidates) == 1:
         return candidates[:top_k]
     try:
-        pairs = [[
-            query,
-            c.get("embedding_text") or c.get("child_text") or c["text"],
-        ] for c in candidates]
-        with _predict_gate:
-            scores = encoder.predict(pairs, show_progress_bar=False)
-        ranked = sorted(zip(candidates, scores, strict=True), key=lambda x: -x[1])
-        return [{**c, "rerank_score": float(s)} for c, s in ranked[:top_k]]
+        if config.RERANK_BACKEND == "dashscope":
+            scores = _rerank_remote(query, candidates)
+        else:
+            scores = _rerank_local(query, candidates)
     except Exception:
         logging.exception("精排失败，降级为 RRF 顺序")
         return candidates[:top_k]
+    if scores is None or len(scores) != len(candidates):
+        return candidates[:top_k]
+    if config.RERANK_FUSION == "alpha":
+        order = _fuse_order(scores, len(scores), config.RERANK_FUSION_ALPHA)
+    else:
+        order = sorted(range(len(scores)), key=lambda i: (-scores[i], i))
+    return [{**candidates[i], "rerank_score": scores[i]} for i in order][:top_k]

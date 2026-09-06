@@ -33,6 +33,9 @@ DASHSCOPE_EMBEDDING_REQUEST_INTERVAL = float(
 )
 DASHSCOPE_EMBEDDING_MAX_RETRIES = int(os.getenv("DASHSCOPE_EMBEDDING_MAX_RETRIES", "4"))
 DASHSCOPE_EMBEDDING_MAX_BACKOFF = float(os.getenv("DASHSCOPE_EMBEDDING_MAX_BACKOFF", "30"))
+# embedding HTTP 客户端超时（秒）：长期记忆写入等旁路调用一旦挂起，
+# 不应把 SSE 流的 done 事件拖住几分钟（压测实测 656s 超时）。
+EMBEDDING_CLIENT_TIMEOUT = float(os.getenv("EMBEDDING_CLIENT_TIMEOUT", "30"))
 
 # 兼容保留：旧 Ark Coding Plan 配置。
 ARK_API_KEY = os.getenv("ARK_API_KEY", "")
@@ -74,6 +77,7 @@ KB_CHUNKS_PATH = os.path.join(DATA_DIR, "kb_chunks.json")
 QUESTIONS_PATH = os.path.join(DATA_DIR, "questions.json")
 PARSE_FAILURES_PATH = os.path.join(DATA_DIR, "parse_failures.json")
 VECTORS_PATH = os.path.join(DATA_DIR, "vectors.npz")
+MEMORY_VECTORS_PATH = os.path.join(DATA_DIR, "memory_vectors.npz")
 DB_PATH = os.path.join(DATA_DIR, "cisp_qa.db")
 
 # ── 存储层（MySQL 主后端 + SQLite 降级；Redis 缓存可选）──
@@ -85,9 +89,18 @@ STATS_CACHE_TTL = int(os.getenv("STATS_CACHE_TTL", "30"))
 RATE_LIMIT_PER_MIN = int(os.getenv("RATE_LIMIT_PER_MIN", "30"))
 
 # ── 检索参数 ──
+# RETRIEVER_K=5 是 gold 集（80 题）上 100% 召回的最小 k，依据与边界见 docs/05-检索测试集评测.md 第 7 节
 RETRIEVER_K = int(os.getenv("RETRIEVER_K", "5"))
-DENSE_K = int(os.getenv("DENSE_K", "20"))
+DENSE_K = int(os.getenv("DENSE_K", "10"))
 SPARSE_K = int(os.getenv("SPARSE_K", "20"))
+RRF_K = int(os.getenv("RRF_K", "20"))
+ENABLE_QUERY_REWRITE = os.getenv("ENABLE_QUERY_REWRITE", "true").lower() == "true"
+# RAG-Fusion 式查询变体：追问改写后额外生成"完整问句版/关键词纠错版"变体，
+# 多路检索 RRF 融合（原查询权重加倍）。变体 embedding 走 flash（便宜），
+# 变体生成走 DeepSeek flash。实测见 docs/07 §4。
+ENABLE_QUERY_VARIANTS = os.getenv("ENABLE_QUERY_VARIANTS", "true").lower() == "true"
+QUERY_VARIANT_MAX = int(os.getenv("QUERY_VARIANT_MAX", "2"))
+ENABLE_FEATURE_RERANKING = os.getenv("ENABLE_FEATURE_RERANKING", "true").lower() == "true"
 CHUNK_MAX_CHARS = int(os.getenv("CHUNK_MAX_CHARS", "1200"))
 SUMMARY_CHUNK_MAX_CHARS = int(os.getenv("SUMMARY_CHUNK_MAX_CHARS", "800"))
 CHUNK_STRATEGY = os.getenv("CHUNK_STRATEGY", "structured")
@@ -98,10 +111,52 @@ CHUNK_OVERLAP_UNITS = int(os.getenv("CHUNK_OVERLAP_UNITS", "1"))
 FIXED_CHUNK_TARGET_CHARS = int(os.getenv("FIXED_CHUNK_TARGET_CHARS", "300"))
 FIXED_CHUNK_MAX_CHARS = int(os.getenv("FIXED_CHUNK_MAX_CHARS", "500"))
 FIXED_CHUNK_OVERLAP_CHARS = int(os.getenv("FIXED_CHUNK_OVERLAP_CHARS", "100"))
-# 精排（交叉编码重排序）：CPU 单次数秒，关闭后保持 RRF 融合顺序
+# 表格感知切片（structured 策略）：PDF 表格序列化为 markdown 独立 chunk。
+# 质量过滤剔除版式装饰框/图形文字误检；字符保真度兜底防止 find_tables 丢字。
+ENABLE_TABLE_CHUNKING = os.getenv("ENABLE_TABLE_CHUNKING", "true").lower() == "true"
+TABLE_MIN_FILLED_CELLS = int(os.getenv("TABLE_MIN_FILLED_CELLS", "8"))
+TABLE_MIN_FILL_RATIO = float(os.getenv("TABLE_MIN_FILL_RATIO", "0.35"))
+TABLE_FILL_RATIO_COLS_WAIVER = int(os.getenv("TABLE_FILL_RATIO_COLS_WAIVER", "9"))  # 包头示意图类合并单元格多，列数≤该值豁免密度要求
+TABLE_MAX_COLS = int(os.getenv("TABLE_MAX_COLS", "10"))        # 更宽的"表格"多为并排多表误检
+TABLE_MAX_CELLS = int(os.getenv("TABLE_MAX_CELLS", "100"))     # 大而稀疏的基本是整页图形
+TABLE_MIN_CHAR_COVERAGE = float(os.getenv("TABLE_MIN_CHAR_COVERAGE", "0.75"))
+TABLE_CONTEXT_MAX_CHARS = int(os.getenv("TABLE_CONTEXT_MAX_CHARS", "60"))  # 表题/引导语截断长度
+# 精排（交叉编码重排序）：默认开启。qwen3.7-text-rerank 为 pointwise 逐对打分，
+# 直接替换顺序会压掉"要素更全"的枚举/定义答案页（docs/05 §3.1.2/3.1.3 实测 -2.5pp）；
+# 与特征序做加权融合后双集 +2.5pp（§3.1.4 离线重放扫参，α∈[0.3,0.6] 均为平台期）。
+# "replace"=纯精排序（对照口径）；后端 "dashscope"=API（独立计费）/"local"=bge 交叉编码器；
+# 失败自动降级 RRF 顺序。BM25 降级召回场景精排收益最大（+11.25pp）。
 ENABLE_RERANKING = os.getenv("ENABLE_RERANKING", "true").lower() == "true"
+RERANK_BACKEND = os.getenv("RERANK_BACKEND", "dashscope")
+RERANK_FUSION = os.getenv("RERANK_FUSION", "alpha")
+RERANK_FUSION_ALPHA = float(os.getenv("RERANK_FUSION_ALPHA", "0.5"))
 RERANK_TOP_K = int(os.getenv("RERANK_TOP_K", "10"))
 LOCAL_RERANKER_MODEL = os.getenv("LOCAL_RERANKER_MODEL", "BAAI/bge-reranker-v2-m3")
+DASHSCOPE_RERANK_BASE_URL = os.getenv("DASHSCOPE_RERANK_BASE_URL", "https://dashscope.aliyuncs.com/api/v1")
+DASHSCOPE_RERANK_MODEL = os.getenv("DASHSCOPE_RERANK_MODEL", "qwen3.7-text-rerank")
+DASHSCOPE_RERANK_REQUEST_INTERVAL = float(os.getenv("DASHSCOPE_RERANK_REQUEST_INTERVAL", "0.2"))
+DASHSCOPE_RERANK_MAX_RETRIES = int(os.getenv("DASHSCOPE_RERANK_MAX_RETRIES", "2"))
+DASHSCOPE_RERANK_MAX_BACKOFF = float(os.getenv("DASHSCOPE_RERANK_MAX_BACKOFF", "8"))
+# dense 召回不可用（embedding 额度耗尽/网络故障）时降级为 BM25 兜底召回，避免查询直接报错。
+ALLOW_DENSE_DEGRADATION = os.getenv("ALLOW_DENSE_DEGRADATION", "true").lower() == "true"
+DENSE_DEGRADED_SPARSE_K = int(os.getenv("DENSE_DEGRADED_SPARSE_K", "60"))
+# embedding 磁盘缓存：按 model+dim+文本哈希缓存向量，评测/重启不重复计费。
+# 只对按量计费的远端后端生效；重建索引、回归评测、重复实验不再烧额度。
+EMBEDDING_CACHE_ENABLED = os.getenv("EMBEDDING_CACHE_ENABLED", "true").lower() == "true"
+EMBEDDING_CACHE_PATH = os.getenv("EMBEDDING_CACHE_PATH", "data/embedding_cache.json")
+# rerank 磁盘缓存：精排对每个 (query, 文档) 对打分独立，按对缓存——同一查询
+# 换候选池也能复用已打的分，评测/调参反复跑不烧 rerank 额度。
+RERANK_CACHE_ENABLED = os.getenv("RERANK_CACHE_ENABLED", "true").lower() == "true"
+RERANK_CACHE_PATH = os.getenv("RERANK_CACHE_PATH", "data/rerank_cache.json")
+# 学习排序：只使用 query/title/text/source/检索分等线上可见特征；模型由 gold train split 训练。
+ENABLE_LEARNED_RANKING = os.getenv("ENABLE_LEARNED_RANKING", "false").lower() == "true"
+LEARNED_RANKER_PATH = os.getenv("LEARNED_RANKER_PATH", "data/learning_ranker_model.json")
+# 门控学习排序：all 表示所有查询都用；否则只对指定意图启用，避免 acronym/definition 被模型误伤。
+LEARNED_RANKER_QUERY_TYPES = os.getenv("LEARNED_RANKER_QUERY_TYPES", "process")
+# 相关性门限：回答前检查检索结果的最高 dense 余弦，低于门限直接拒答（跳过回答 LLM）。
+# 门限用 gold 集与离题问题集校准（见 docs/05 §3.3）；关闭后拒答完全依赖回答 prompt 规则 1。
+ENABLE_RELEVANCE_GATE = os.getenv("ENABLE_RELEVANCE_GATE", "true").lower() == "true"
+RELEVANCE_FLOOR = float(os.getenv("RELEVANCE_FLOOR", "0.45"))
 
 # ── 出题 ──
 QUIZ_AI_MIN_BANK = int(os.getenv("QUIZ_AI_MIN_BANK", "5"))   # 域内未做题少于该数时允许 AI 补题
@@ -116,9 +171,23 @@ REVIEW_DUE_STRENGTH = float(os.getenv("REVIEW_DUE_STRENGTH", "0.5"))         # �
 # Elo 评级（Pelánek 2016）：按时间顺序 replay attempts 增量更新
 ELO_INIT = float(os.getenv("ELO_INIT", "1500"))
 ELO_K = float(os.getenv("ELO_K", "32"))
+# 提问信号（问答侧薄弱信号融合）：同一域提问次数达到该值视为"高频提问"
+ASK_SIGNAL_MIN = int(os.getenv("ASK_SIGNAL_MIN", "3"))
+# 高频提问且答题样本不足/薄弱的域，在 weak 抽题中的加权倍数
+ASK_WEIGHT_BONUS = float(os.getenv("ASK_WEIGHT_BONUS", "1.5"))
+# FSRS 复习到期卡优先：weak 抽题时先消耗到期复习卡（0 关闭）
+ENABLE_FSRS_REVIEW = os.getenv("ENABLE_FSRS_REVIEW", "true").lower() == "true"
+
+# ── AI 出题质量 ──
+# 生成后自校验（第二个 LLM 验证答案可由资料推出/干扰项互斥/题干无歧义），不过则标 needs_review
+QUIZ_VERIFY_ENABLED = os.getenv("QUIZ_VERIFY_ENABLED", "true").lower() == "true"
+# 近似查重：与同域现有题干的 SequenceMatcher 相似度超过该值视为重复
+QUIZ_DUP_SIMILARITY = float(os.getenv("QUIZ_DUP_SIMILARITY", "0.85"))
 
 # ── 多轮记忆 ──
 MEMORY_MAX_ROUNDS = int(os.getenv("MEMORY_MAX_ROUNDS", "5"))
+SHORT_MEMORY_TTL = int(os.getenv("SHORT_MEMORY_TTL", "7200"))
+LONG_MEMORY_TOP_K = int(os.getenv("LONG_MEMORY_TOP_K", "3"))
 
 # ── 原始资料路径（只读）──
 COURSE_DIR = os.getenv(

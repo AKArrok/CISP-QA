@@ -12,7 +12,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import AIMessage, HumanMessage
 
 import config
 from agents.graph import SessionStore
@@ -60,12 +60,14 @@ async def chat_stream(req: ChatRequest):
 
     # 问答缓存：仅首轮（该会话还没有任何历史）问题，避免多轮上下文误命中
     history_state = await app_graph.aget_state(config_)
-    first_turn = not (history_state.values or {}).get("messages", [])
+    graph_empty = not (history_state.values or {}).get("messages", [])
+    from agents import memory
+    restored_rows = memory.load_short_context(req.thread_id, limit=config.MEMORY_MAX_ROUNDS * 2) if graph_empty else []
+    first_turn = graph_empty and not restored_rows
     cache_key = f"ans:{hashlib.md5(req.query.strip().encode()).hexdigest()}"
     if first_turn:
         cached_answer = cache.get_json(cache_key)
         if cached_answer:
-            from agents import memory
             from agents.metrics import record
             record(req.thread_id, req.query, "knowledge(cached)", 0, 0, 1, 1, 0, 0)
             memory.save_round(req.thread_id, req.query, cached_answer, "knowledge")
@@ -82,8 +84,15 @@ async def chat_stream(req: ChatRequest):
         stamps = {"route_ms": None, "retrieval_ms": None, "first_token_ms": None}
         intent_seen = None
         sent_tokens = 0
+        messages = [HumanMessage(content=req.query)]
+        if restored_rows:
+            restored = []
+            for row in restored_rows:
+                cls = HumanMessage if row.get("role") == "user" else AIMessage
+                restored.append(cls(content=row.get("content", "")))
+            messages = restored + messages
         async for ev in app_graph.astream_events(
-            {"messages": [HumanMessage(content=req.query)], "question": req.query,
+            {"messages": messages, "question": req.query,
              "thread_id": req.thread_id},
             config=config_, version="v2",
         ):
@@ -144,6 +153,7 @@ def sse(obj: dict) -> str:
 class QuizNextRequest(BaseModel):
     mode: str = "random"          # random | weak
     domain: str | None = None
+    anchor_question_id: str | None = None   # 以该题（通常是刚答错的）为锚点定向生成同类题
 
 
 class QuizAnswerRequest(BaseModel):
@@ -155,7 +165,8 @@ class QuizAnswerRequest(BaseModel):
 def quiz_next(req: QuizNextRequest):
     from quiz import get_next_question
     try:
-        return get_next_question(mode=req.mode, domain=req.domain)
+        return get_next_question(mode=req.mode, domain=req.domain,
+                                 anchor_question_id=req.anchor_question_id)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e)) from e
 

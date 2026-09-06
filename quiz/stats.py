@@ -48,12 +48,17 @@ def _elo_expected(rating: float, opponent: float) -> float:
 
 
 def domain_profiles(now: float | None = None) -> dict[str, dict]:
-    """{域: 画像}，由 attempts 实时聚合。画像含 Beta 后验参数、Elo、遗忘曲线指标。"""
+    """{域: 画像}，由 attempts 实时聚合（融合问答侧提问信号）。
+
+    画像含 Beta 后验参数、Elo、遗忘曲线指标；asks 为该域的提问次数
+    （用户反复追问 = "哪里不会"的先验信号，与答题对错互补）。
+    """
     now = now if now is not None else time.time()
     # rows: (domain, correct, answered_at) 按时间排序
     rows = sorted(
         repos.attempt_rows(), key=lambda r: r[2]  # answered_at
     )
+    ask_rows = {d: (n, last) for d, n, last in repos.signal_rows()}
     by_domain: dict[str, dict] = {}
 
     for domain, correct, answered_at in rows:
@@ -78,6 +83,14 @@ def domain_profiles(now: float | None = None) -> dict[str, dict]:
         p["rating_history"].append(p["rating"])
 
     profiles: dict[str, dict] = {}
+    # 只有提问、还没答过题的域也建画像（attempts=0，供"高频提问未验证"提示与抽题加权）
+    ask_only = {d: v for d, v in ask_rows.items() if d not in by_domain and d in set(config_domains())}
+    for d, (n, _last) in ask_only.items():
+        by_domain[d] = {
+            "attempts": 0, "correct": 0, "wrong": 0,
+            "last_answered_at": 0.0, "streak": 0, "max_streak": 0,
+            "rating": config.ELO_INIT, "rating_history": [],
+        }
     for domain, p in by_domain.items():
         a = p["correct"] + config.BETA_PRIOR
         b = p["wrong"] + config.BETA_PRIOR
@@ -85,6 +98,7 @@ def domain_profiles(now: float | None = None) -> dict[str, dict]:
         days_since = (now - p["last_answered_at"]) / 86400.0 if p["last_answered_at"] else None
         strength = _memory_strength(days_since) if days_since is not None else 1.0
         p_below = float(_beta_p_below(a, b, config.MASTERY_WEAK_THRESHOLD))
+        asks = ask_rows.get(domain, (0, 0.0))[0]
         profiles[domain] = {
             **p,
             "mastery": round(mastery, 4),
@@ -94,11 +108,19 @@ def domain_profiles(now: float | None = None) -> dict[str, dict]:
             "last_seen_days": round(days_since, 1) if days_since is not None else None,
             "memory_strength": round(float(strength), 4),
             "due_for_review": bool(strength <= config.REVIEW_DUE_STRENGTH),
+            "asks": asks,
             # 薄弱 = 后验概率超过阈值（样本不足时概率自然不高，不会误判）
             "weak": bool(p["attempts"] >= 2 and p_below > config.MASTERY_WEAK_PROB),
             "insufficient": bool(p["attempts"] < 2),
+            # 高频提问但答题未验证 → 优先引导做题验证
+            "ask_unverified": bool(asks >= config.ASK_SIGNAL_MIN and p["attempts"] < 2),
         }
     return profiles
+
+
+def config_domains() -> list[str]:
+    from domains import DOMAINS
+    return DOMAINS
 
 
 def weak_domains() -> list[str]:
@@ -133,20 +155,30 @@ def summary() -> dict:
             "last_seen_days": p["last_seen_days"],
             "rating": round(p["rating"], 1),
             "streak": p["streak"],
+            "asks": p["asks"],
+            "ask_unverified": p["ask_unverified"],
         }
         for d, p in sorted(profiles.items())
     ]
     total_attempts = sum(p["attempts"] for p in profiles.values())
     total_correct = sum(p["correct"] for p in profiles.values())
     weak = weak_domains()
+    try:
+        from quiz import review
+        due_cards = review.due_count()
+    except Exception:
+        due_cards = 0
     result = {
         "total_attempts": total_attempts,
         "total_accuracy": round(total_correct / total_attempts, 4) if total_attempts else None,
         "domains": domains_detail,
         "weak_domains": weak,
         "review_due_domains": review_due_domains(),
+        "ask_unverified_domains": sorted(
+            d for d, p in profiles.items() if p["ask_unverified"]),
+        "review_due_cards": due_cards,
         "model": {
-            "type": "beta_elo_forgetting",
+            "type": "beta_elo_forgetting_fsrs",
             "half_life_days": config.MASTERY_HALF_LIFE_DAYS,
             "weak_prob": config.MASTERY_WEAK_PROB,
         },

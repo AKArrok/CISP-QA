@@ -1,7 +1,11 @@
 """判分与解析组装（确定性比对，不走 LLM）。"""
 from __future__ import annotations
 
+import logging
+
 from quiz import store
+
+logger = logging.getLogger(__name__)
 
 
 def normalize_choice(choice: str) -> str:
@@ -9,7 +13,7 @@ def normalize_choice(choice: str) -> str:
 
 
 def grade(question: dict, choice: str) -> dict:
-    """判分 → 落库 → 返回对错/正确答案/解析/关联课件。"""
+    """判分 → 落库（attempts + FSRS 复习卡）→ 返回对错/正确答案/解析/关联课件。"""
     correct = normalize_choice(choice) == normalize_choice(question["answer"])
     store.record_attempt(
         question_id=question["id"],
@@ -19,6 +23,11 @@ def grade(question: dict, choice: str) -> dict:
         choice=normalize_choice(choice),
         correct=correct,
     )
+    try:
+        from quiz import review
+        review.update_card(question["id"], question.get("domain"), correct)
+    except Exception:
+        logger.exception("FSRS 复习卡更新失败（不影响判分）")
     return {
         "correct": correct,
         "answer": question["answer"],

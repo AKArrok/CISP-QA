@@ -106,3 +106,11 @@ header h1 { font-size: 20px; }
   display: inline-block; height: 10px; background: var(--primary);
   border-radius: 5px; vertical-align: middle; margin-right: 8px;
 }
+
+/* 答题后闭环操作 */
+.q-actions { margin-top: 12px; display: flex; gap: 8px; }
+.q-actions button {
+  padding: 6px 14px; border: 1px solid #5b8def; border-radius: 6px;
+  background: #f0f5ff; color: #2b5cb8; cursor: pointer; font-size: 13px;
+}
+.q-actions button:hover { background: #e0ebff; }

@@ -14,6 +14,17 @@ $("tab-chat").onclick = () => switchTab(true);
 $("tab-quiz").onclick = () => switchTab(false);
 
 /* ══════════ 问答 ══════════ */
+function renderMarkdown(text) {
+  // 先转义 HTML 防注入，再做有限 Markdown 转换（加粗/行内代码/列表/分隔线/换行）
+  let t = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  t = t.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  t = t.replace(/`([^`]+)`/g, "<code>$1</code>");
+  t = t.replace(/^---+$/gm, "<hr>");
+  t = t.replace(/^[-*] (.+)$/gm, "&bull; $1");
+  t = t.replace(/\n/g, "<br>");
+  return t;
+}
+
 function addBubble(cls, text) {
   const div = document.createElement("div");
   div.className = "bubble " + cls;
@@ -42,6 +53,7 @@ async function sendChat() {
     const reader = resp.body.getReader();
     const decoder = new TextDecoder();
     let buf = "";
+    let full = "";
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
@@ -51,13 +63,18 @@ async function sendChat() {
         const line = buf.slice(0, idx); buf = buf.slice(idx + 2);
         if (!line.startsWith("data: ")) continue;
         const ev = JSON.parse(line.slice(6));
-        if (ev.type === "token") bot.textContent += ev.content;
+        if (ev.type === "token") {
+          full += ev.content;
+          // 剥离模型自带的出处行（页面底部统一渲染来源，避免重复）
+          bot.innerHTML = renderMarkdown(full.replace(/\n?【出处】[^\n]*$/, ""));
+        }
         else if (ev.type === "contexts") {
           ev.contexts.forEach(c => sources.push(`《${c.source}》第${c.page}页`));
         }
         $("chat-history").scrollTop = $("chat-history").scrollHeight;
       }
     }
+    bot.innerHTML = renderMarkdown(full.replace(/\n?【出处】[^\n]*$/, ""));
   } catch (e) {
     bot.textContent += "\n[连接出错: " + e.message + "]";
   }
@@ -103,17 +120,7 @@ async function nextQuestion() {
       body: JSON.stringify({ mode, domain }),
     });
     if (!resp.ok) throw new Error((await resp.json()).detail || resp.statusText);
-    currentQuestion = await resp.json();
-    $("q-domain").textContent = currentQuestion.domain || "未分类";
-    $("q-source").textContent = currentQuestion.source;
-    $("q-stem").textContent = currentQuestion.stem;
-    for (const [letter, text] of Object.entries(currentQuestion.options)) {
-      const div = document.createElement("div");
-      div.className = "option";
-      div.textContent = `${letter}. ${text}`;
-      div.onclick = () => choose(letter, div);
-      $("q-options").appendChild(div);
-    }
+    renderQuestion(await resp.json());
   } catch (e) {
     $("q-stem").textContent = "出题失败: " + e.message;
   }
@@ -153,6 +160,58 @@ async function choose(letter, el) {
   $("q-feedback").classList.remove("hidden");
 }
 
+/* 答题后闭环：把错题带进问答页深挖 */
+function deepDive() {
+  if (!currentQuestion) return;
+  const wrongOpt = document.querySelector(".option.chosen");
+  const chosen = wrongOpt ? wrongOpt.textContent.trim().slice(0, 120) : "";
+  const q = `关于这道题我答错了，请帮我讲透背后的知识点，并指出我可能混淆的概念：
+「${currentQuestion.stem}」
+我的选择：${chosen || "（见上）"}
+请先解释正确答案为什么对，再逐个分析易混淆的干扰项。`;
+  switchTab(true);
+  $("chat-input").value = q;
+  sendChat();
+}
+
+/* 再练一道同类题：以当前题为锚点定向生成 */
+async function similarQuestion() {
+  if (!currentQuestion) return;
+  $("quiz-next").disabled = true;
+  $("quiz-question").classList.remove("hidden");
+  $("q-feedback").classList.add("hidden");
+  $("q-options").innerHTML = "";
+  $("q-stem").textContent = "正在围绕同一考点出新题（约需十几秒）…";
+  answered = false;
+  try {
+    const resp = await fetch("/quiz/next", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mode: "weak", domain: currentQuestion.domain,
+                             anchor_question_id: currentQuestion.id }),
+    });
+    if (!resp.ok) throw new Error((await resp.json()).detail || resp.statusText);
+    renderQuestion(await resp.json());
+  } catch (e) {
+    $("q-stem").textContent = "出题失败: " + e.message;
+  }
+  $("quiz-next").disabled = false;
+}
+
+function renderQuestion(q) {
+  currentQuestion = q;
+  $("q-domain").textContent = q.domain || "未分类";
+  $("q-source").textContent = q.source;
+  $("q-stem").textContent = q.stem;
+  $("q-options").innerHTML = "";
+  for (const [letter, text] of Object.entries(q.options)) {
+    const div = document.createElement("div");
+    div.className = "option";
+    div.textContent = `${letter}. ${text}`;
+    div.onclick = () => choose(letter, div);
+    $("q-options").appendChild(div);
+  }
+}
+
 function confLabel(conf) {
   if (conf === null || conf === undefined) return "—";
   return conf < 0.5 ? "低" : conf < 0.8 ? "中" : "高";
@@ -168,6 +227,9 @@ async function loadStats() {
     let summary = `累计答题 ${s.total_attempts} 道，总正确率 ${(s.total_accuracy * 100).toFixed(1)}%`;
     if (s.weak_domains.length) summary += `；薄弱域：${s.weak_domains.join("、")}`;
     if (s.review_due_domains.length) summary += `；复习到期：${s.review_due_domains.join("、")}`;
+    if (s.review_due_cards) summary += `；待复习错题 ${s.review_due_cards} 道`;
+    if (s.ask_unverified_domains && s.ask_unverified_domains.length)
+      summary += `；你反复提问但还没刷题验证：${s.ask_unverified_domains.join("、")}`;
     $("stats-summary").textContent = summary;
     const tbody = $("stats-table").querySelector("tbody");
     tbody.innerHTML = "";
@@ -175,11 +237,12 @@ async function loadStats() {
       const tr = document.createElement("tr");
       const masteryPct = d.mastery === null || d.mastery === undefined ? "—" : (d.mastery * 100).toFixed(0) + "%";
       const status = d.weak ? "⚠ 薄弱"
+        : d.ask_unverified ? "❓ 提问多·未验证"
         : d.insufficient ? "样本不足"
         : d.due_for_review ? "复习到期"
         : "正常";
       const statusCls = d.weak ? "weak" : d.due_for_review ? "review" : "";
-      tr.innerHTML = `<td>${d.domain}</td><td>${d.attempts}</td>
+      tr.innerHTML = `<td>${d.domain}</td><td>${d.attempts}</td><td>${d.asks || 0}</td>
         <td><span class="bar" style="width:${d.mastery ? d.mastery * 80 : 0}px"></span>${masteryPct}</td>
         <td>${confLabel(d.confidence)}</td>
         <td class="${statusCls}">${status}</td>`;
@@ -189,5 +252,7 @@ async function loadStats() {
 }
 
 $("quiz-next").onclick = nextQuestion;
+$("q-deep-dive").onclick = deepDive;
+$("q-similar").onclick = similarQuestion;
 initDomains();
 loadStats();

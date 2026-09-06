@@ -1,0 +1,2182 @@
+[
+  {
+    "id": "holdout_continuity_bcp_definition",
+    "question": "业务连续性计划的目标是什么，它如何应对突发事件？",
+    "query_type": "definition",
+    "primary_domain": "业务连续性",
+    "evidence": [
+      {
+        "source": "业务连续性_V4.1",
+        "page": 7,
+        "must_contain": [
+          "业务连续性计划",
+          "突发事件",
+          "关键业务功能",
+          "业务中断"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_continuity_forensics_principles",
+    "question": "计算机取证应遵循哪些原则？",
+    "query_type": "process",
+    "primary_domain": "业务连续性",
+    "evidence": [
+      {
+        "source": "业务连续性_V4.1",
+        "page": 32,
+        "must_contain": [
+          "合法原则",
+          "充分授权原则",
+          "优先保护证据原则",
+          "全程监督原则"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_assurance_threat_intelligence",
+    "question": "威胁情报为什么对信息安全很重要？",
+    "query_type": "definition",
+    "primary_domain": "信息安全保障",
+    "evidence": [
+      {
+        "source": "信息安全保障_V4.1",
+        "page": 7,
+        "must_contain": [
+          "威胁情报",
+          "网络威胁轮廓",
+          "技术的发展"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_assurance_situation_awareness_origin",
+    "question": "态势感知概念起源于哪里，主要依赖什么能力？",
+    "query_type": "definition",
+    "primary_domain": "信息安全保障",
+    "evidence": [
+      {
+        "source": "信息安全保障_V4.1",
+        "page": 9,
+        "must_contain": [
+          "态势感知",
+          "20世纪80年代",
+          "美国空军",
+          "大数据"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_support_asymmetric_algorithms",
+    "question": "非对称密码算法有哪些典型算法，它的密钥有什么特点？",
+    "query_type": "definition",
+    "primary_domain": "信息安全支撑技术",
+    "evidence": [
+      {
+        "source": "信息安全支撑技术_V4.1",
+        "page": 12,
+        "must_contain": [
+          "公钥",
+          "私钥",
+          "RSA",
+          "ECC",
+          "ElGamal"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_support_kerberos_tgt",
+    "question": "Kerberos获得TGT时，AS会返回哪些关键信息？",
+    "query_type": "process",
+    "primary_domain": "信息安全支撑技术",
+    "evidence": [
+      {
+        "source": "信息安全支撑技术_V4.1",
+        "page": 47,
+        "must_contain": [
+          "AS",
+          "TGT",
+          "TGS会话密钥",
+          "KDC密码"
+        ]
+      },
+      {
+        "source": "信息安全支撑技术_V4.2",
+        "page": 50,
+        "must_contain": [
+          "AS",
+          "TGT",
+          "TGS会话密钥",
+          "KDC密码"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_regulation_standardization_principles",
+    "question": "标准化工作的原则有哪些？",
+    "query_type": "definition",
+    "primary_domain": "信息安全监管",
+    "evidence": [
+      {
+        "source": "信息安全监管_v4.1",
+        "page": 37,
+        "must_contain": [
+          "标准化",
+          "简化",
+          "统一",
+          "协调",
+          "优化"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_regulation_china_standard_types",
+    "question": "我国标准分类中GB、GB/T、GB/Z分别代表什么？",
+    "query_type": "comparison",
+    "primary_domain": "信息安全监管",
+    "evidence": [
+      {
+        "source": "信息安全监管_v4.1",
+        "page": 41,
+        "must_contain": [
+          "GB",
+          "强制性国家标准",
+          "GB/T",
+          "推荐性国家标准",
+          "GB/Z"
+        ]
+      },
+      {
+        "source": "网络安全监管_v4.2",
+        "page": 41,
+        "must_contain": [
+          "GB",
+          "强制性国家标准",
+          "GB/T",
+          "推荐性国家标准",
+          "GB/Z"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_management_coso_elements",
+    "question": "COSO报告包含哪些目标和管理要素？",
+    "query_type": "acronym",
+    "primary_domain": "信息安全管理",
+    "evidence": [
+      {
+        "source": "信息安全管理_V4.1",
+        "page": 10,
+        "must_contain": [
+          "COSO",
+          "三个目标",
+          "五个管理要素",
+          "控制活动"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_management_policy_review",
+    "question": "信息安全策略制定和评审有哪些要求？",
+    "query_type": "process",
+    "primary_domain": "信息安全管理",
+    "evidence": [
+      {
+        "source": "CISP 4.2版本《信息安全管理》知识点总结",
+        "page": 2,
+        "must_contain": [
+          "制定策略",
+          "领导批准",
+          "策略评审",
+          "方针"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_assessment_quantitative_terms",
+    "question": "定量风险分析中EF、SLE、ALE分别表示什么？",
+    "query_type": "acronym",
+    "primary_domain": "信息安全评估",
+    "evidence": [
+      {
+        "source": "信息安全评估_V4.1",
+        "page": 32,
+        "must_contain": [
+          "暴露因子",
+          "单一预期损失",
+          "年度预期损失",
+          "SLE",
+          "ALE"
+        ]
+      },
+      {
+        "source": "信息安全评估_V4.2",
+        "page": 34,
+        "must_contain": [
+          "EF",
+          "SLE",
+          "ALE",
+          "年度损失预期值",
+          "单次损失预期值"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_assessment_existing_controls",
+    "question": "风险评估中确认已有安全措施时要覆盖哪些层面？",
+    "query_type": "definition",
+    "primary_domain": "信息安全评估",
+    "evidence": [
+      {
+        "source": "信息安全评估_V4.1",
+        "page": 51,
+        "must_contain": [
+          "已有安全措施",
+          "技术层面",
+          "组织层面",
+          "管理层面"
+        ]
+      },
+      {
+        "source": "信息安全评估_V4.2",
+        "page": 51,
+        "must_contain": [
+          "已有安全措施",
+          "技术层面",
+          "组织层面",
+          "管理层面"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_operations_project_management_areas",
+    "question": "项目管理包含哪些知识领域？",
+    "query_type": "definition",
+    "primary_domain": "安全工程与运营",
+    "evidence": [
+      {
+        "source": "安全工程与运营_V4.2",
+        "page": 9,
+        "must_contain": [
+          "项目管理",
+          "范围",
+          "时间",
+          "成本",
+          "质量"
+        ]
+      },
+      {
+        "source": "安全工程与运营_V4.1",
+        "page": 9,
+        "must_contain": [
+          "项目管理",
+          "范围",
+          "时间",
+          "成本",
+          "质量"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_operations_digital_copyright_measures",
+    "question": "数字版权保护措施中DOI和DCI分别用于什么？",
+    "query_type": "comparison",
+    "primary_domain": "安全工程与运营",
+    "evidence": [
+      {
+        "source": "安全工程与运营_V4.1",
+        "page": 58,
+        "must_contain": [
+          "DOI",
+          "DCI",
+          "数字作品版权登记平台",
+          "数字版权费用结算平台"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_network_osi_security_services",
+    "question": "OSI安全体系结构包含哪五类安全服务？",
+    "query_type": "fact",
+    "primary_domain": "物理与网络通信安全",
+    "evidence": [
+      {
+        "source": "物理与网络通信安全_V4.1",
+        "page": 17,
+        "must_contain": [
+          "鉴别服务",
+          "访问控制服务",
+          "数据完整性服务",
+          "数据保密性服务",
+          "抗抵赖服务"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_network_wpa2_stages",
+    "question": "802.11i运行通常包括哪四个阶段？",
+    "query_type": "process",
+    "primary_domain": "物理与网络通信安全",
+    "evidence": [
+      {
+        "source": "物理与网络通信安全_V4.1",
+        "page": 36,
+        "must_contain": [
+          "802.11i",
+          "发现AP阶段",
+          "认证阶段",
+          "密钥管理阶段",
+          "安全传输阶段"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_computing_linux_password_files",
+    "question": "Linux中passwd和shadow文件分别保存哪些用户认证信息？",
+    "query_type": "comparison",
+    "primary_domain": "计算环境安全",
+    "evidence": [
+      {
+        "source": "计算环境安全_v4.1",
+        "page": 7,
+        "must_contain": [
+          "/etc/passwd",
+          "/etc/shadow",
+          "用户密码散列",
+          "密码管理信息"
+        ]
+      },
+      {
+        "source": "计算环境安全_v4.2",
+        "page": 7,
+        "must_contain": [
+          "/etc/passwd",
+          "/etc/shadow",
+          "用户密码散列",
+          "密码管理信息"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_computing_hidden_channel",
+    "question": "什么是隐蔽信道，发现它通常看哪些权限关系？",
+    "query_type": "definition",
+    "primary_domain": "计算环境安全",
+    "evidence": [
+      {
+        "source": "计算环境安全_v4.1",
+        "page": 10,
+        "must_contain": [
+          "隐蔽信道",
+          "共同访问权限",
+          "共同修改权限",
+          "接收进程"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_software_spiral_model_risk",
+    "question": "螺旋模型相比其他生命周期模型为什么更强调风险？",
+    "query_type": "comparison",
+    "primary_domain": "软件安全开发",
+    "evidence": [
+      {
+        "source": "软件安全开发_V4.1",
+        "page": 8,
+        "must_contain": [
+          "螺旋模型",
+          "风险分析",
+          "构建原型",
+          "减小风险"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_software_supply_chain_security",
+    "question": "软件供应链安全涉及哪些生命周期环节？",
+    "query_type": "definition",
+    "primary_domain": "软件安全开发",
+    "evidence": [
+      {
+        "source": "软件安全开发_V4.1",
+        "page": 77,
+        "must_contain": [
+          "供应链安全",
+          "代码编写",
+          "代码编译",
+          "软件分发",
+          "软件更新"
+        ]
+      },
+      {
+        "source": "软件安全开发_V4.2",
+        "page": 73,
+        "must_contain": [
+          "供应链安全",
+          "代码编写",
+          "代码编译",
+          "软件分发",
+          "软件更新"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_continuity_business_priority_mtd",
+    "question": "确定业务优先级时需要做哪些工作，MTD和RTO有什么关系？",
+    "query_type": "process",
+    "primary_domain": "业务连续性",
+    "evidence": [
+      {
+        "source": "业务连续性_V4.2",
+        "page": 11,
+        "must_contain": [
+          "确定业务优先级",
+          "最大允许中断时间MTD",
+          "恢复时间目标",
+          "RTO<MTD"
+        ]
+      },
+      {
+        "source": "业务连续性_V4.1",
+        "page": 11,
+        "must_contain": [
+          "确定业务优先级",
+          "最大允许中断时间",
+          "恢复时间目标",
+          "RTO"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_continuity_risk_reduction_people",
+    "question": "业务连续性风险降低中为什么重点保护人力资源，常见措施是什么？",
+    "query_type": "definition",
+    "primary_domain": "业务连续性",
+    "evidence": [
+      {
+        "source": "业务连续性_V4.2",
+        "page": 15,
+        "must_contain": [
+          "风险降低",
+          "人力资源",
+          "人员冗余",
+          "AB角",
+          "轮岗"
+        ]
+      },
+      {
+        "source": "业务连续性_V4.1",
+        "page": 15,
+        "must_contain": [
+          "风险降低",
+          "人力资源",
+          "人员冗余",
+          "AB角",
+          "轮岗"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_assurance_ia_work_requirements",
+    "question": "我国信息安全保障工作的总体要求和主要原则是什么？",
+    "query_type": "definition",
+    "primary_domain": "信息安全保障",
+    "evidence": [
+      {
+        "source": "信息安全保障_V4.1",
+        "page": 21,
+        "must_contain": [
+          "我国信息安全保障工作",
+          "积极防御",
+          "综合防范",
+          "技术与管理并重"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_assurance_ics_controls",
+    "question": "工业控制系统安全架构包括哪几类控制，各自覆盖哪些内容？",
+    "query_type": "comparison",
+    "primary_domain": "信息安全保障",
+    "evidence": [
+      {
+        "source": "信息安全保障_V4.2",
+        "page": 23,
+        "must_contain": [
+          "管理控制",
+          "操作控制",
+          "技术控制",
+          "风险评价",
+          "识别和认证"
+        ]
+      },
+      {
+        "source": "信息安全保障_V4.1",
+        "page": 26,
+        "must_contain": [
+          "管理控制",
+          "操作控制",
+          "技术控制",
+          "风险评价",
+          "识别和认证"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_support_kerckhoffs_principle",
+    "question": "柯克霍夫原则对算法和密钥分别提出什么要求？",
+    "query_type": "definition",
+    "primary_domain": "信息安全支撑技术",
+    "evidence": [
+      {
+        "source": "CISP 4.2版本《安全支撑技术》知识点总结",
+        "page": 1,
+        "must_contain": [
+          "柯克霍夫原则",
+          "密钥保密",
+          "算法公开"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_support_signature_properties",
+    "question": "数字签名主要有什么作用？",
+    "query_type": "definition",
+    "primary_domain": "信息安全支撑技术",
+    "evidence": [
+      {
+        "source": "信息安全支撑技术_V4.1",
+        "page": 17,
+        "must_contain": [
+          "数字签名",
+          "不可伪造性",
+          "不可否认性",
+          "消息完整性"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_regulation_personal_info_scope",
+    "question": "网络安全法语境下，个人信息保护主要关注哪些内容？",
+    "query_type": "definition",
+    "primary_domain": "信息安全监管",
+    "evidence": [
+      {
+        "source": "CISP 4.2版本《信息安全监管》知识点总结",
+        "page": 1,
+        "must_contain": [
+          "个人信息",
+          "隐私保护",
+          "网络信息安全",
+          "网络安全法"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_regulation_security_review",
+    "question": "网络安全审查制度关注哪些对象和机构？",
+    "query_type": "definition",
+    "primary_domain": "信息安全监管",
+    "evidence": [
+      {
+        "source": "网络安全监管_v4.2",
+        "page": 20,
+        "must_contain": [
+          "网络安全审查制度",
+          "网络产品和服务",
+          "网络安全审查委员会",
+          "第三方机构"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_management_security_management_value",
+    "question": "信息安全管理对组织有什么作用和价值？",
+    "query_type": "definition",
+    "primary_domain": "信息安全管理",
+    "evidence": [
+      {
+        "source": "CISP 4.2版本《信息安全管理》知识点总结",
+        "page": 1,
+        "must_contain": [
+          "信息安全管理的作用",
+          "促进业务目标",
+          "预防、阻止和减少",
+          "对内和对外"
+        ]
+      },
+      {
+        "source": "信息安全管理_V4.2",
+        "page": 5,
+        "must_contain": [
+          "信息安全管理的作用",
+          "组织整体管理",
+          "预防、阻止或减少",
+          "对组织的价值"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_management_document_structure",
+    "question": "信息安全管理体系文档通常分几层，高层和底层分别包括什么？",
+    "query_type": "fact",
+    "primary_domain": "信息安全管理",
+    "evidence": [
+      {
+        "source": "CISP 4.2版本《信息安全管理》知识点总结",
+        "page": 2,
+        "must_contain": [
+          "文档管理结构",
+          "3 层或4 层",
+          "策略",
+          "手册",
+          "表单"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_assessment_baseline_detailed_combined",
+    "question": "风险评估常见途径包括哪些，组合评估适合解决什么问题？",
+    "query_type": "comparison",
+    "primary_domain": "信息安全评估",
+    "evidence": [
+      {
+        "source": "信息安全评估_V4.1",
+        "page": 30,
+        "must_contain": [
+          "风险评估途径",
+          "基线评估",
+          "详细评估",
+          "组合评估"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_assessment_plan_contents",
+    "question": "风险评估方案一般包括哪些内容，为什么要获得最高管理者支持？",
+    "query_type": "process",
+    "primary_domain": "信息安全评估",
+    "evidence": [
+      {
+        "source": "信息安全评估_V4.1",
+        "page": 46,
+        "must_contain": [
+          "风险评估方案",
+          "团队组织",
+          "工作计划",
+          "时间进度安排",
+          "最高管理者"
+        ]
+      },
+      {
+        "source": "信息安全评估_V4.2",
+        "page": 46,
+        "must_contain": [
+          "风险评估方案",
+          "团队组织",
+          "工作计划",
+          "时间进度安排",
+          "最高管理者"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_operations_sse_cmm_roles",
+    "question": "SSE-CMM分别能为获取组织、工程组织和认证评估组织提供什么价值？",
+    "query_type": "comparison",
+    "primary_domain": "安全工程与运营",
+    "evidence": [
+      {
+        "source": "安全工程与运营_V4.2",
+        "page": 16,
+        "must_contain": [
+          "获取组织",
+          "工程组织",
+          "认证评估组织",
+          "过程评估标准"
+        ]
+      },
+      {
+        "source": "安全工程与运营_V4.1",
+        "page": 16,
+        "must_contain": [
+          "获取组织",
+          "工程组织",
+          "认证评估组织",
+          "过程评估标准"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_operations_security_ops_standards",
+    "question": "安全运营参考哪些标准，COBIT、ITIL和ISO27000分别强调什么？",
+    "query_type": "comparison",
+    "primary_domain": "安全工程与运营",
+    "evidence": [
+      {
+        "source": "安全工程与运营_V4.2",
+        "page": 47,
+        "must_contain": [
+          "安全运营参考标准",
+          "COBIT",
+          "ITIL",
+          "ISO27000"
+        ]
+      },
+      {
+        "source": "安全工程与运营_V4.1",
+        "page": 47,
+        "must_contain": [
+          "安全运营参考标准",
+          "COBIT",
+          "ITIL",
+          "ISO27000"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_network_physical_earthquake_load",
+    "question": "机房抗震及承重要考虑哪些设防类别和使用因素？",
+    "query_type": "definition",
+    "primary_domain": "物理与网络通信安全",
+    "evidence": [
+      {
+        "source": "物理与网络通信安全_V4.2",
+        "page": 6,
+        "must_contain": [
+          "抗震",
+          "特殊设防类",
+          "重点设防类",
+          "标准设防类",
+          "承重"
+        ]
+      },
+      {
+        "source": "CISP 4.2版本《物理网络安全》知识点总结",
+        "page": 1,
+        "must_contain": [
+          "抗震及承重",
+          "特殊设防类",
+          "重点设防类",
+          "标准设防类"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_network_electromagnetic_protection",
+    "question": "电磁防护中电磁屏蔽、信号干扰和Tempest分别解决什么问题？",
+    "query_type": "comparison",
+    "primary_domain": "物理与网络通信安全",
+    "evidence": [
+      {
+        "source": "物理与网络通信安全_V4.2",
+        "page": 9,
+        "must_contain": [
+          "电磁防护",
+          "电磁屏蔽",
+          "信号干扰",
+          "Tempest"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_computing_windows_uac",
+    "question": "Windows用户帐户控制UAC涉及哪两类访问令牌？",
+    "query_type": "acronym",
+    "primary_domain": "计算环境安全",
+    "evidence": [
+      {
+        "source": "计算环境安全_v4.1",
+        "page": 9,
+        "must_contain": [
+          "用户帐户控制",
+          "UAC",
+          "标准受限访问令牌",
+          "完全访问令牌"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_computing_linux_suid",
+    "question": "Linux中的Suid位会让程序以谁的权限运行，典型示例是什么？",
+    "query_type": "definition",
+    "primary_domain": "计算环境安全",
+    "evidence": [
+      {
+        "source": "计算环境安全_v4.1",
+        "page": 9,
+        "must_contain": [
+          "Suid位",
+          "文件所有者的权限",
+          "/usr/bin/passwd",
+          "SUID程序"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_software_security_requirements_analysis",
+    "question": "软件安全需求分析要同时考虑哪些需求和视角？",
+    "query_type": "definition",
+    "primary_domain": "软件安全开发",
+    "evidence": [
+      {
+        "source": "软件安全开发_V4.1",
+        "page": 36,
+        "must_contain": [
+          "安全需求分析",
+          "安全功能需求",
+          "安全保障需求",
+          "攻击者"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout_software_code_review_methods",
+    "question": "源代码审核有哪些方式，人工审核和工具审核各有什么问题？",
+    "query_type": "comparison",
+    "primary_domain": "软件安全开发",
+    "evidence": [
+      {
+        "source": "软件安全开发_V4.2",
+        "page": 56,
+        "must_contain": [
+          "源代码审核方式",
+          "人工审核",
+          "工具审核",
+          "误报和漏报"
+        ]
+      },
+      {
+        "source": "软件安全开发_V4.1",
+        "page": 59,
+        "must_contain": [
+          "源代码审核方式",
+          "人工审核",
+          "工具审核",
+          "容易遗漏"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout2_continuity_backup_type_boundaries",
+    "question": "完整备份、差分备份和增量备份的区别是什么，各自更适合什么场景？",
+    "query_type": "comparison",
+    "primary_domain": "业务连续性",
+    "evidence": [
+      {
+        "source": "CISP 4.2版本《业务连续性管理》知识点总结",
+        "page": 2,
+        "must_contain": [
+          "完整备份",
+          "差分备份",
+          "增量备份",
+          "系统数据",
+          "业务数据"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout2_continuity_incident_response_phases",
+    "question": "信息安全应急响应管理过程包括哪六个阶段？",
+    "query_type": "process",
+    "primary_domain": "业务连续性",
+    "evidence": [
+      {
+        "source": "CISP 4.2版本《业务连续性管理》知识点总结",
+        "page": 1,
+        "must_contain": [
+          "准备",
+          "检测",
+          "遏制",
+          "根除",
+          "恢复",
+          "跟踪总结"
+        ]
+      },
+      {
+        "source": "业务连续性_V4.2",
+        "page": 29,
+        "must_contain": [
+          "准备",
+          "检测",
+          "遏制",
+          "根除",
+          "恢复",
+          "跟踪总结"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout2_assurance_iatf_principles_characteristics",
+    "question": "IATF的信息保障技术框架有哪些安全原则和特点？",
+    "query_type": "definition",
+    "primary_domain": "信息安全保障",
+    "evidence": [
+      {
+        "source": "信息安全保障_V4.2",
+        "page": 45,
+        "must_contain": [
+          "保护多个位置",
+          "分层防御",
+          "安全强健性",
+          "纵深防御",
+          "人"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout2_assurance_cia_extended_attributes",
+    "question": "信息安全属性里的CIA三元组是什么，除了CIA还提到哪些属性？",
+    "query_type": "definition",
+    "primary_domain": "信息安全保障",
+    "evidence": [
+      {
+        "source": "信息安全保障_V4.2",
+        "page": 7,
+        "must_contain": [
+          "CIA三元组",
+          "保密性",
+          "完整性",
+          "可用性",
+          "真实性",
+          "不可否认性"
+        ]
+      },
+      {
+        "source": "信息安全保障_V4.1",
+        "page": 10,
+        "must_contain": [
+          "CIA三元组",
+          "保密性",
+          "完整性",
+          "可用性",
+          "真实性",
+          "不可否认性"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout2_support_x509_certificate_entity",
+    "question": "数字证书是什么，X.509规范和终端实体分别说明了什么？",
+    "query_type": "definition",
+    "primary_domain": "信息安全支撑技术",
+    "evidence": [
+      {
+        "source": "信息安全支撑技术_V4.1",
+        "page": 22,
+        "must_contain": [
+          "数字证书",
+          "CA签名",
+          "身份信息",
+          "公开密钥",
+          "X.509"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout2_support_crypto_property_mapping",
+    "question": "机密性、完整性、可鉴别性、不可否认性分别可以用哪些密码技术支撑？",
+    "query_type": "comparison",
+    "primary_domain": "信息安全支撑技术",
+    "evidence": [
+      {
+        "source": "信息安全支撑技术_V4.2",
+        "page": 10,
+        "must_contain": [
+          "机密性",
+          "完整性",
+          "可鉴别性",
+          "不可否认性",
+          "数字签名"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout2_regulation_sc27_workgroups_boundary",
+    "question": "ISO/IEC JTC1 SC27的WG1、WG3，以及我国TC260的WG5分别负责什么方向？",
+    "query_type": "fact",
+    "primary_domain": "信息安全监管",
+    "evidence": [
+      {
+        "source": "CISP 4.2版本《信息安全监管》知识点总结",
+        "page": 2,
+        "must_contain": [
+          "ISO/IEC JTC1 SC27",
+          "WG1",
+          "信息安全管理体系",
+          "WG3",
+          "安全评估标准",
+          "TC260",
+          "WG5"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout2_regulation_grade_measurement_bans",
+    "question": "等级保护测评机构被明令禁止哪些行为，测评报告由什么资质人员签字？",
+    "query_type": "comparison",
+    "primary_domain": "信息安全监管",
+    "evidence": [
+      {
+        "source": "网络安全监管_v4.2",
+        "page": 57,
+        "must_contain": [
+          "承担信息系统安全建设整改工作",
+          "分包或外包",
+          "指定的信息安全产品",
+          "高级资质人员",
+          "等级保护测评报告"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout2_management_security_policy_controls",
+    "question": "信息安全方针的控制目标是什么，方针发布和评审有什么要求？",
+    "query_type": "definition",
+    "primary_domain": "信息安全管理",
+    "evidence": [
+      {
+        "source": "信息安全管理_V4.2",
+        "page": 33,
+        "must_contain": [
+          "信息安全方针",
+          "业务要求",
+          "法律法规",
+          "批准",
+          "适宜性"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout2_management_communications_security_controls",
+    "question": "通信安全里，网络安全管理和信息交换分别有哪些控制措施？",
+    "query_type": "comparison",
+    "primary_domain": "信息安全管理",
+    "evidence": [
+      {
+        "source": "信息安全管理_V4.2",
+        "page": 44,
+        "must_contain": [
+          "网络控制",
+          "网络服务安全",
+          "网络隔离",
+          "信息交换策略和规程",
+          "电子消息"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout2_assessment_tcsec_orange_book_boundary",
+    "question": "TCSEC为什么被称为橙皮书，它后来被哪个标准取代？",
+    "query_type": "definition",
+    "primary_domain": "信息安全评估",
+    "evidence": [
+      {
+        "source": "信息安全评估_V4.2",
+        "page": 10,
+        "must_contain": [
+          "TCSEC",
+          "国防部彩虹系列",
+          "橙皮书",
+          "通用准则",
+          "CC"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout2_assessment_risk_result_levels",
+    "question": "风险结果判定中，高风险、严重风险、中等风险和低风险分别如何描述？",
+    "query_type": "comparison",
+    "primary_domain": "信息安全评估",
+    "evidence": [
+      {
+        "source": "信息安全评估_V4.2",
+        "page": 54,
+        "must_contain": [
+          "高风险",
+          "严重风险",
+          "中等风险",
+          "低风险",
+          "风险评估报告"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout2_operations_sse_cmm_process_areas",
+    "question": "SSE-CMM安全工程过程里，风险过程、工程过程和保证过程分别包含哪些过程区域？",
+    "query_type": "comparison",
+    "primary_domain": "安全工程与运营",
+    "evidence": [
+      {
+        "source": "安全工程与运营_V4.2",
+        "page": 22,
+        "must_contain": [
+          "风险过程",
+          "评估威胁",
+          "工程过程",
+          "确定安全需求",
+          "保证过程"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout2_operations_capability_level_zero",
+    "question": "SSE-CMM能力成熟度0级为什么叫未实施级，会导致什么后果？",
+    "query_type": "definition",
+    "primary_domain": "安全工程与运营",
+    "evidence": [
+      {
+        "source": "安全工程与运营_V4.1",
+        "page": 40,
+        "must_contain": [
+          "未实施级",
+          "没有公共特征",
+          "不能成功执行",
+          "能力成熟度为0级",
+          "安全工程服务"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout2_network_electromagnetic_tempest_boundary",
+    "question": "电磁防护要解决什么问题，电磁屏蔽、信号干扰和Tempest技术分别是什么？",
+    "query_type": "comparison",
+    "primary_domain": "物理与网络通信安全",
+    "evidence": [
+      {
+        "source": "物理与网络通信安全_V4.2",
+        "page": 9,
+        "must_contain": [
+          "电磁辐射",
+          "信息泄露",
+          "电磁屏蔽",
+          "信号干扰",
+          "Tempest"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout2_network_interface_layer_security_issues",
+    "question": "网络接口层有哪些主要协议和安全问题？",
+    "query_type": "comparison",
+    "primary_domain": "物理与网络通信安全",
+    "evidence": [
+      {
+        "source": "物理与网络通信安全_V4.2",
+        "page": 19,
+        "must_contain": [
+          "ARP",
+          "RARP",
+          "电磁泄漏",
+          "ARP欺骗",
+          "mac flooding"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout2_computing_info_collection_defense",
+    "question": "针对公开信息收集、网络信息收集、系统及应用信息收集，分别有哪些防范措施？",
+    "query_type": "comparison",
+    "primary_domain": "计算环境安全",
+    "evidence": [
+      {
+        "source": "计算环境安全_v4.2",
+        "page": 21,
+        "must_contain": [
+          "信息展示最小化原则",
+          "IDS",
+          "防火墙",
+          "阻止ICMP",
+          "减少攻击面"
+        ]
+      },
+      {
+        "source": "计算环境安全_v4.1",
+        "page": 22,
+        "must_contain": [
+          "信息展示最小化原则",
+          "IDS",
+          "防火墙",
+          "阻止ICMP",
+          "减少攻击面"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout2_computing_network_interface_confuser",
+    "question": "二层网络接口层为什么会有嗅探、欺骗和拒绝服务问题？",
+    "query_type": "definition",
+    "primary_domain": "计算环境安全",
+    "evidence": [
+      {
+        "source": "物理与网络通信安全_V4.2",
+        "page": 19,
+        "must_contain": [
+          "嗅探",
+          "明文通信",
+          "ARP欺骗",
+          "拒绝服务",
+          "mac flooding"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout2_software_stride_six_threats",
+    "question": "STRIDE六类威胁分别对应哪些安全属性和典型例子？",
+    "query_type": "comparison",
+    "primary_domain": "软件安全开发",
+    "evidence": [
+      {
+        "source": "软件安全开发_V4.2",
+        "page": 32,
+        "must_contain": [
+          "Spoofing",
+          "Tampering",
+          "Repudiation",
+          "InformationDisclosure",
+          "DenialofService"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout2_software_attack_surface_reduction_examples",
+    "question": "降低软件攻击面通常有哪些做法，比如默认执行、网络连接、访问权限和运行权限如何调整？",
+    "query_type": "comparison",
+    "primary_domain": "软件安全开发",
+    "evidence": [
+      {
+        "source": "软件安全开发_V4.2",
+        "page": 42,
+        "must_contain": [
+          "默认关闭",
+          "关闭网络连接",
+          "鉴别用户访问",
+          "强ACLs",
+          "低权限账户"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout3_continuity_gbz20986_grades",
+    "question": "GB/Z 20986把信息安全事件分为哪四级，特别重大事件的判据是什么？",
+    "query_type": "fact",
+    "primary_domain": "业务连续性",
+    "evidence": [
+      {
+        "source": "业务连续性_V4.2",
+        "page": 26,
+        "must_contain": [
+          "GB/Z 20986",
+          "特别重大事件",
+          "重大事件",
+          "较大事件",
+          "一般事件"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout3_continuity_drill_procedure",
+    "question": "信息安全应急演练的操作流程包括哪些环节？",
+    "query_type": "process",
+    "primary_domain": "业务连续性",
+    "evidence": [
+      {
+        "source": "业务连续性_V4.2",
+        "page": 33,
+        "must_contain": [
+          "应急事件通报",
+          "优先级",
+          "应急响应启动",
+          "更新现有应急预案"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout3_assurance_cloud_security_architecture",
+    "question": "云计算安全架构覆盖哪些角色，安全服务体系三层架构是什么？",
+    "query_type": "definition",
+    "primary_domain": "信息安全保障",
+    "evidence": [
+      {
+        "source": "信息安全保障_V4.2",
+        "page": 25,
+        "must_contain": [
+          "云用户",
+          "云审计者",
+          "云经纪人",
+          "安全云基础设施",
+          "云安全基础服务",
+          "云安全应用服务"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout3_assurance_sabsa_layers",
+    "question": "SABSA模型架构分为哪几层，背景层和概念层分别对应什么视图？",
+    "query_type": "definition",
+    "primary_domain": "信息安全保障",
+    "evidence": [
+      {
+        "source": "信息安全保障_V4.2",
+        "page": 60,
+        "must_contain": [
+          "SABSA",
+          "背景层",
+          "业务视图",
+          "概念层",
+          "架构视图",
+          "逻辑层"
+        ]
+      },
+      {
+        "source": "信息安全保障_V4.1",
+        "page": 61,
+        "must_contain": [
+          "SABSA",
+          "背景层",
+          "概念层",
+          "逻辑层"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout3_support_pki_pmi_division",
+    "question": "PKI和PMI在职责上如何分工，各自用护照还是签证类比？",
+    "query_type": "comparison",
+    "primary_domain": "信息安全支撑技术",
+    "evidence": [
+      {
+        "source": "信息安全支撑技术_V4.1",
+        "page": 74,
+        "must_contain": [
+          "PKI",
+          "PMI",
+          "你是谁",
+          "你能做什么",
+          "护照",
+          "签证"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout3_support_blp_biba_rules",
+    "question": "BLP模型和Biba模型各自的读写规则是什么，分别强调机密性还是完整性？",
+    "query_type": "comparison",
+    "primary_domain": "信息安全支撑技术",
+    "evidence": [
+      {
+        "source": "信息安全支撑技术_V4.1",
+        "page": 62,
+        "must_contain": [
+          "BLP",
+          "向下读",
+          "向上写",
+          "机密性"
+        ]
+      },
+      {
+        "source": "信息安全支撑技术_V4.1",
+        "page": 65,
+        "must_contain": [
+          "Biba",
+          "向下写",
+          "向上读",
+          "完整性"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout3_regulation_global_legislation_focus",
+    "question": "各国网络安全立法的重点制度涉及哪些新旧问题？",
+    "query_type": "definition",
+    "primary_domain": "信息安全监管",
+    "evidence": [
+      {
+        "source": "网络安全监管_v4.2",
+        "page": 7,
+        "must_contain": [
+          "立法",
+          "关键基础设施",
+          "数据安全",
+          "监测预警"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout3_regulation_grading_process",
+    "question": "等级保护定级的一般流程是什么，定级对象的安全保护等级如何确定？",
+    "query_type": "process",
+    "primary_domain": "信息安全监管",
+    "evidence": [
+      {
+        "source": "网络安全监管_v4.2",
+        "page": 52,
+        "must_contain": [
+          "定级对象",
+          "侵害的客体",
+          "侵害程度",
+          "安全保护等级"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout3_management_risk_process_four_two",
+    "question": "GB/Z 24364信息安全风险管理包括哪四个阶段和哪两个贯穿过程？",
+    "query_type": "fact",
+    "primary_domain": "信息安全管理",
+    "evidence": [
+      {
+        "source": "信息安全管理_V4.2",
+        "page": 8,
+        "must_contain": [
+          "GB/Z 24364",
+          "背景建立",
+          "风险评估",
+          "风险处理",
+          "批准监督",
+          "监控审查",
+          "沟通咨询"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout3_management_isms_role_internal_external",
+    "question": "信息安全管理体系对内和对外分别有哪些作用？",
+    "query_type": "definition",
+    "primary_domain": "信息安全管理",
+    "evidence": [
+      {
+        "source": "信息安全管理_V4.2",
+        "page": 17,
+        "must_contain": [
+          "关键信息资产",
+          "业务持续",
+          "信息安全意识",
+          "持续改进"
+        ]
+      },
+      {
+        "source": "信息安全管理_V4.2",
+        "page": 18,
+        "must_contain": [
+          "利益相关方",
+          "外包",
+          "法律法规",
+          "27001"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout3_assessment_pp_st_difference",
+    "question": "CC中保护轮廓PP和安全目标ST有什么区别，各自表达什么？",
+    "query_type": "comparison",
+    "primary_domain": "信息安全评估",
+    "evidence": [
+      {
+        "source": "信息安全评估_V4.2",
+        "page": 20,
+        "must_contain": [
+          "保护轮廓",
+          "PP",
+          "TOE",
+          "安全要求"
+        ]
+      },
+      {
+        "source": "信息安全评估_V4.2",
+        "page": 21,
+        "must_contain": [
+          "安全目标",
+          "ST",
+          "TOE"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout3_assessment_qualitative_method",
+    "question": "定性风险分析方法有什么特点，为什么它应用最广却带有主观性？",
+    "query_type": "comparison",
+    "primary_domain": "信息安全评估",
+    "evidence": [
+      {
+        "source": "信息安全评估_V4.2",
+        "page": 37,
+        "must_contain": [
+          "定性分析",
+          "主观性",
+          "经验",
+          "直觉"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout3_operations_vulnerability_causes",
+    "question": "安全漏洞产生的原因有哪几类，各是什么？",
+    "query_type": "fact",
+    "primary_domain": "安全工程与运营",
+    "evidence": [
+      {
+        "source": "安全工程与运营_V4.2",
+        "page": 50,
+        "must_contain": [
+          "技术原因",
+          "经济原因",
+          "环境原因",
+          "柠檬市场",
+          "安全缺陷"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout3_operations_iso9000_quality_four",
+    "question": "ISO9000从哪四个方面规范质量管理，质量控制是什么性质的控制？",
+    "query_type": "definition",
+    "primary_domain": "安全工程与运营",
+    "evidence": [
+      {
+        "source": "安全工程与运营_V4.2",
+        "page": 11,
+        "must_contain": [
+          "ISO9000",
+          "机构",
+          "程序",
+          "过程",
+          "总结"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout3_network_gap_gateway_isolation",
+    "question": "网闸由哪些部分组成，它通过什么方式实现内外网隔离？",
+    "query_type": "definition",
+    "primary_domain": "物理与网络通信安全",
+    "evidence": [
+      {
+        "source": "物理与网络通信安全_V4.2",
+        "page": 49,
+        "must_contain": [
+          "网闸",
+          "外部处理单元",
+          "内部处理单元",
+          "仲裁处理单元",
+          "物理隔离",
+          "协议隔离"
+        ]
+      },
+      {
+        "source": "物理与网络通信安全_V4.1",
+        "page": 57,
+        "must_contain": [
+          "网闸",
+          "外部处理单元",
+          "内部处理单元",
+          "仲裁处理单元",
+          "物理隔离",
+          "协议隔离"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout3_network_syn_flood_principle_defense",
+    "question": "SYN Flood攻击的原理是什么，拒绝服务攻击可以从哪些方面防御？",
+    "query_type": "definition",
+    "primary_domain": "物理与网络通信安全",
+    "evidence": [
+      {
+        "source": "物理与网络通信安全_V4.2",
+        "page": 40,
+        "must_contain": [
+          "SYN Flood",
+          "伪造",
+          "连接数"
+        ]
+      },
+      {
+        "source": "物理与网络通信安全_V4.2",
+        "page": 42,
+        "must_contain": [
+          "管理防御",
+          "技术防御",
+          "监测防御"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout3_computing_memory_protection",
+    "question": "操作系统的内存保护采用哪些机制，文件系统保护常用什么手段？",
+    "query_type": "definition",
+    "primary_domain": "计算环境安全",
+    "evidence": [
+      {
+        "source": "计算环境安全_v4.1",
+        "page": 12,
+        "must_contain": [
+          "内存保护",
+          "段式保护",
+          "页式保护",
+          "段页式",
+          "访问控制列表",
+          "加密"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout3_computing_malware_propagation",
+    "question": "恶意代码有哪些传播方式，网络传播具体通过哪些渠道？",
+    "query_type": "fact",
+    "primary_domain": "计算环境安全",
+    "evidence": [
+      {
+        "source": "计算环境安全_v4.1",
+        "page": 33,
+        "must_contain": [
+          "文件传播",
+          "移动介质",
+          "网络传播",
+          "电子邮件",
+          "漏洞"
+        ]
+      },
+      {
+        "source": "计算环境安全_v4.2",
+        "page": 31,
+        "must_contain": [
+          "文件传播",
+          "移动介质",
+          "网络传播",
+          "电子邮件",
+          "漏洞"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout3_software_security_models_compare",
+    "question": "SDL、CLASP和SAMM各自有什么特点，分别适合什么场景？",
+    "query_type": "comparison",
+    "primary_domain": "软件安全开发",
+    "evidence": [
+      {
+        "source": "软件安全开发_V4.2",
+        "page": 26,
+        "must_contain": [
+          "SDL",
+          "CLASP",
+          "SAMM",
+          "大型企业",
+          "小型企业"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout3_software_fix_cost_early",
+    "question": "为什么软件安全问题越早解决成本越低，NIST给出的修复代价倍数是多少？",
+    "query_type": "definition",
+    "primary_domain": "软件安全开发",
+    "evidence": [
+      {
+        "source": "软件安全开发_V4.2",
+        "page": 17,
+        "must_contain": [
+          "生命周期",
+          "数倍",
+          "NIST",
+          "30倍"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout4_continuity_raid_levels",
+    "question": "冗余磁盘阵列RAID有哪几种实现方式，各提供什么能力？",
+    "query_type": "fact",
+    "primary_domain": "业务连续性",
+    "evidence": [
+      {
+        "source": "业务连续性_V4.2",
+        "page": 55,
+        "must_contain": [
+          "RAID-O",
+          "条带",
+          "RAID-1",
+          "镜像",
+          "RAID-5",
+          "奇偶校验"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout4_continuity_drp_four_stages",
+    "question": "灾难恢复规划是一个什么过程，包含哪四个阶段？",
+    "query_type": "process",
+    "primary_domain": "业务连续性",
+    "evidence": [
+      {
+        "source": "业务连续性_V4.2",
+        "page": 62,
+        "must_contain": [
+          "灾难恢复规划",
+          "需求分析",
+          "策略制定",
+          "策略实现",
+          "预案"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout4_assurance_security_evolution_stages",
+    "question": "信息安全经历了从通信安全到网络空间安全的哪四个发展阶段？",
+    "query_type": "definition",
+    "primary_domain": "信息安全保障",
+    "evidence": [
+      {
+        "source": "信息安全保障_V4.2",
+        "page": 16,
+        "must_contain": [
+          "通信安全",
+          "40年代",
+          "保密性"
+        ]
+      },
+      {
+        "source": "信息安全保障_V4.2",
+        "page": 17,
+        "must_contain": [
+          "计算机安全",
+          "70-90年代",
+          "访问控制"
+        ]
+      },
+      {
+        "source": "信息安全保障_V4.2",
+        "page": 18,
+        "must_contain": [
+          "信息系统安全",
+          "90年代后",
+          "防火墙"
+        ]
+      },
+      {
+        "source": "信息安全保障_V4.2",
+        "page": 19,
+        "must_contain": [
+          "网络空间安全",
+          "威慑"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout4_assurance_cloud_security_risks",
+    "question": "云计算面临哪些安全风险？",
+    "query_type": "definition",
+    "primary_domain": "信息安全保障",
+    "evidence": [
+      {
+        "source": "信息安全保障_V4.2",
+        "page": 24,
+        "must_contain": [
+          "数据管理和访问失控",
+          "数据管理责任",
+          "数据保护"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout4_support_sso_essence",
+    "question": "单点登录的实质是什么？",
+    "query_type": "definition",
+    "primary_domain": "信息安全支撑技术",
+    "evidence": [
+      {
+        "source": "信息安全支撑技术_V4.1",
+        "page": 43,
+        "must_contain": [
+          "单点登录",
+          "安全凭证",
+          "传递或共享",
+          "身份认证"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout4_support_rbac_four_types",
+    "question": "RBAC模型有哪四种类型，各自包含什么要素或约束？",
+    "query_type": "comparison",
+    "primary_domain": "信息安全支撑技术",
+    "evidence": [
+      {
+        "source": "信息安全支撑技术_V4.1",
+        "page": 70,
+        "must_contain": [
+          "RBAC0",
+          "用户",
+          "角色",
+          "会话",
+          "权限",
+          "RBAC1",
+          "RBAC2",
+          "RBAC3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout4_regulation_grade_standard_four_categories",
+    "question": "信息安全等级保护标准体系分为哪四大类，各类指导什么？",
+    "query_type": "fact",
+    "primary_domain": "信息安全监管",
+    "evidence": [
+      {
+        "source": "网络安全监管_v4.2",
+        "page": 49,
+        "must_contain": [
+          "安全等级类",
+          "方法指导类",
+          "定级"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout4_regulation_cisp_ethics_code",
+    "question": "CISP职业道德准则要求哪些行为？",
+    "query_type": "definition",
+    "primary_domain": "信息安全监管",
+    "evidence": [
+      {
+        "source": "网络安全监管_v4.2",
+        "page": 34,
+        "must_contain": [
+          "CISP职业道德准则",
+          "诚实守信",
+          "尽职尽责",
+          "维护荣誉"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout4_management_isms_success_factors",
+    "question": "信息安全管理体系建设成功的因素有哪些？",
+    "query_type": "definition",
+    "primary_domain": "信息安全管理",
+    "evidence": [
+      {
+        "source": "信息安全管理_V4.1",
+        "page": 20,
+        "must_contain": [
+          "信息安全策略",
+          "最高管理者",
+          "承诺",
+          "风险管理"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout4_management_control_structure_layers",
+    "question": "安全控制措施的内部结构是什么，各层数量是多少？",
+    "query_type": "fact",
+    "primary_domain": "信息安全管理",
+    "evidence": [
+      {
+        "source": "信息安全管理_V4.2",
+        "page": 32,
+        "must_contain": [
+          "14个类别",
+          "35个目标",
+          "114个控制措施"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout4_assessment_residual_risk",
+    "question": "什么是残余风险，实施安全措施后残余风险仍不可接受怎么办？",
+    "query_type": "definition",
+    "primary_domain": "信息安全评估",
+    "evidence": [
+      {
+        "source": "信息安全评估_V4.2",
+        "page": 56,
+        "must_contain": [
+          "残余风险",
+          "再评估",
+          "可接受",
+          "安全措施"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout4_assessment_threat_elements",
+    "question": "风险评估要素中威胁是什么，引起威胁的因素分哪几类？",
+    "query_type": "definition",
+    "primary_domain": "信息安全评估",
+    "evidence": [
+      {
+        "source": "信息安全评估_V4.2",
+        "page": 27,
+        "must_contain": [
+          "威胁",
+          "威胁主体",
+          "人为因素",
+          "环境因素",
+          "恶意"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout4_operations_vulnerability_definition",
+    "question": "什么是安全漏洞，ISO/IEC 15408如何定义它？",
+    "query_type": "definition",
+    "primary_domain": "安全工程与运营",
+    "evidence": [
+      {
+        "source": "安全工程与运营_V4.2",
+        "page": 48,
+        "must_contain": [
+          "安全漏洞",
+          "脆弱性",
+          "评估对象",
+          "TOE",
+          "弱点"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout4_operations_incident_management_goals",
+    "question": "安全运营中事件管理要达成什么目标？",
+    "query_type": "definition",
+    "primary_domain": "安全工程与运营",
+    "evidence": [
+      {
+        "source": "安全工程与运营_V4.2",
+        "page": 54,
+        "must_contain": [
+          "事件管理",
+          "检测",
+          "支持资源",
+          "生命周期"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout4_network_vpn_tunnel_technologies",
+    "question": "什么是虚拟专用网络VPN，它用哪些实现技术？",
+    "query_type": "definition",
+    "primary_domain": "物理与网络通信安全",
+    "evidence": [
+      {
+        "source": "物理与网络通信安全_V4.2",
+        "page": 54,
+        "must_contain": [
+          "VPN",
+          "隧道技术",
+          "PPTP",
+          "L2TP",
+          "IPSEC",
+          "SSL"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout4_network_rfid_composition",
+    "question": "RFID系统由哪些部分组成，射频识别有什么特征？",
+    "query_type": "definition",
+    "primary_domain": "物理与网络通信安全",
+    "evidence": [
+      {
+        "source": "物理与网络通信安全_V4.2",
+        "page": 33,
+        "must_contain": [
+          "RFID",
+          "阅读器",
+          "应答器",
+          "电子标签",
+          "应用软件"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout4_computing_web_server_software_risks",
+    "question": "Web服务端软件存在哪些安全问题？",
+    "query_type": "definition",
+    "primary_domain": "计算环境安全",
+    "evidence": [
+      {
+        "source": "计算环境安全_v4.2",
+        "page": 40,
+        "must_contain": [
+          "服务支撑软件",
+          "安全漏洞",
+          "配置缺陷",
+          "客户端"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout4_computing_http_protocol_weakness",
+    "question": "HTTP协议本身有哪些安全问题？",
+    "query_type": "definition",
+    "primary_domain": "计算环境安全",
+    "evidence": [
+      {
+        "source": "计算环境安全_v4.1",
+        "page": 44,
+        "must_contain": [
+          "信息泄漏",
+          "弱验证",
+          "状态跟踪",
+          "Session"
+        ]
+      },
+      {
+        "source": "计算环境安全_v4.2",
+        "page": 39,
+        "must_contain": [
+          "信息泄漏",
+          "弱验证",
+          "状态跟踪",
+          "Session"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout4_software_insecurity_internal_external",
+    "question": "软件安全问题产生的内因和外因分别是什么？",
+    "query_type": "comparison",
+    "primary_domain": "软件安全开发",
+    "evidence": [
+      {
+        "source": "软件安全开发_V4.2",
+        "page": 13,
+        "must_contain": [
+          "内因",
+          "规模",
+          "复用",
+          "扩展模块"
+        ]
+      },
+      {
+        "source": "软件安全开发_V4.2",
+        "page": 14,
+        "must_contain": [
+          "外因",
+          "互联网",
+          "开发环境",
+          "安全开发工具"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "holdout4_software_fuzzing_key_factors",
+    "question": "影响模糊测试效果的关键因素有哪些？",
+    "query_type": "definition",
+    "primary_domain": "软件安全开发",
+    "evidence": [
+      {
+        "source": "软件安全开发_V4.2",
+        "page": 67,
+        "must_contain": [
+          "测试点",
+          "样本选择",
+          "数据关联性",
+          "自动化框架",
+          "异常监控"
+        ]
+      }
+    ]
+  }
+]

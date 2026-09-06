@@ -16,6 +16,11 @@ from data_ingest.chunking import (
     deduplicate_chunks,
     split_long,
 )
+from data_ingest.tables import (
+    body_text_without_tables,
+    extract_page_tables,
+    find_caption,
+)
 from domains import FILENAME_DOMAINS
 
 
@@ -26,23 +31,37 @@ def domain_from_filename(name: str) -> str:
     return "未分类"
 
 
-def extract_pdf(path: str, kind: str) -> list[dict]:
+def extract_pdf(path: str, kind: str) -> tuple[list[dict], int]:
+    """逐页提取文本；检测到合格表格的页面额外输出 body_text（剔除表格区域）
+    与 tables（markdown + 表题），供 structured 切片生成独立表格 Child。"""
     import pymupdf
 
     domain = domain_from_filename(os.path.basename(path))
     source = os.path.splitext(os.path.basename(path))[0]
     pages = []
+    table_count = 0
     doc = pymupdf.open(path)
     for page_no, page in enumerate(doc, start=1):
-        pages.append({
+        entry = {
             "domain": domain,
             "source": source,
             "page": page_no,
             "kind": kind,
             "text": page.get_text(),
-        })
+        }
+        if config.ENABLE_TABLE_CHUNKING:
+            tables = extract_page_tables(page)
+            if tables:
+                text_blocks = [b for b in page.get_text("blocks") if b[6] == 0]
+                bboxes = [pymupdf.Rect(t["bbox"]) for t in tables]
+                entry["body_text"] = body_text_without_tables(text_blocks, bboxes)
+                for table in tables:
+                    table["caption"] = find_caption(text_blocks, pymupdf.Rect(table["bbox"]))
+                entry["tables"] = tables
+                table_count += len(tables)
+        pages.append(entry)
     doc.close()
-    return pages
+    return pages, table_count
 
 
 def extract_pptx(path: str) -> list[dict]:
@@ -94,10 +113,8 @@ def _documents() -> list[tuple[list[dict], int]]:
         dirs.sort()
         for filename in sorted(files):
             if filename.lower().endswith(".pdf") and "知识点总结" not in filename:
-                documents.append((
-                    extract_pdf(os.path.join(root, filename), "courseware"),
-                    config.CHUNK_MAX_CHARS,
-                ))
+                pages, _ = extract_pdf(os.path.join(root, filename), "courseware")
+                documents.append((pages, config.CHUNK_MAX_CHARS))
 
     for filename in sorted(os.listdir(config.EXAM_DIR)):
         if filename.lower().endswith(".pptx"):
@@ -110,10 +127,8 @@ def _documents() -> list[tuple[list[dict], int]]:
         dirs.sort()
         for filename in sorted(files):
             if filename.lower().endswith(".pdf") and "知识点总结" in filename:
-                documents.append((
-                    extract_pdf(os.path.join(root, filename), "summary"),
-                    config.SUMMARY_CHUNK_MAX_CHARS,
-                ))
+                pages, _ = extract_pdf(os.path.join(root, filename), "summary")
+                documents.append((pages, config.SUMMARY_CHUNK_MAX_CHARS))
     return documents
 
 
@@ -164,7 +179,7 @@ def main() -> None:
         update_manifest(
             chunk_count=len(chunks),
             kb_schema_version=KB_SCHEMA_VERSION,
-            chunking_strategy=args.strategy,
+            chunking_strategy=args.strategy + ("+tables" if config.ENABLE_TABLE_CHUNKING else ""),
         )
 
     by_domain: dict[str, int] = {}
@@ -172,8 +187,9 @@ def main() -> None:
     for chunk in chunks:
         by_domain[chunk["domain"]] = by_domain.get(chunk["domain"], 0) + 1
         by_kind[chunk["kind"]] = by_kind.get(chunk["kind"], 0) + 1
-    print(f"切片策略: {args.strategy}")
-    print(f"共 {len(chunks)} 个知识块 → {args.output}")
+    table_chunks = sum(1 for chunk in chunks if chunk.get("element") == "table")
+    print(f"切片策略: {args.strategy}（表格感知: {'开' if config.ENABLE_TABLE_CHUNKING else '关'}）")
+    print(f"共 {len(chunks)} 个知识块（其中表格块 {table_chunks} 个）→ {args.output}")
     print(f"去除重复块: {removed_duplicates}")
     print("按知识域:", json.dumps(by_domain, ensure_ascii=False))
     print("按类型:", json.dumps(by_kind, ensure_ascii=False))
