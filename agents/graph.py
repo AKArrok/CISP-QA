@@ -1,7 +1,7 @@
 """LangGraph 主图: route → rewrite → retrieve → answer。
 
-裁剪自 AniRAG 的多 Agent 流水线：CISP 问答以单点知识问答为主，
-去掉 Expert 并行/评估重规划/别名/联网回退，保留「路由 → 追问改写 → 混合检索 → 长期记忆召回 → 流式回答」。
+CISP 问答以单点知识问答为主，采用「路由 → 追问改写 → 混合检索 → 长期记忆召回 → 流式回答」
+的多阶段流水线；刻意不引入 Expert 并行/评估重规划等复杂编排——单点事实问答下收益低、延迟成本高。
 """
 from __future__ import annotations
 
@@ -291,7 +291,7 @@ def build_graph():
 
 
 class SessionStore:
-    """同一 thread_id 共享 MemorySaver 与已编译图实例（移植 AniRAG 模式）。"""
+    """同一 thread_id 共享 MemorySaver 与已编译图实例（thread 间隔离）。"""
 
     _instances: dict[str, tuple] = {}
 

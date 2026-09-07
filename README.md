@@ -1,6 +1,6 @@
 # CISP-QA — CISP 备考问答机器人
 
-基于本地课程资料的 RAG 问答 + 真题刷题 + 薄弱点画像。改造自本人的 AniRAG 项目（LangGraph 多 Agent 架构），详见 `docs/`。
+基于本地课程资料的 RAG 问答 + 真题刷题 + 薄弱点画像，采用基于 LangGraph 的多阶段 RAG 流水线，详见 `docs/`。
 
 ## 功能
 

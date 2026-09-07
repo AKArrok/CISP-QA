@@ -1,4 +1,4 @@
-"""Configuration — all settings from environment variables (CISP-QA, trimmed from AniRAG)."""
+"""Configuration — all settings from environment variables (CISP-QA)."""
 import os
 from dotenv import load_dotenv
 
@@ -208,7 +208,7 @@ def validate() -> None:
     if EMBEDDING_BACKEND == "ark" and not ARK_EMBEDDING_API_KEY:
         missing.append("ARK_EMBEDDING_API_KEY")
     if missing:
-        raise EnvironmentError(f"Missing env vars: {missing}. Copy AniRAG/.env keys into .env")
+        raise EnvironmentError(f"Missing env vars: {missing}. Fill the required keys into .env")
     if EMBEDDING_BACKEND == "ark" and ARK_EMBEDDING_MODEL != "doubao-embedding-vision":
         raise ValueError("Ark Coding Plan embedding model must be doubao-embedding-vision")
     if (EMBEDDING_BACKEND == "dashscope"

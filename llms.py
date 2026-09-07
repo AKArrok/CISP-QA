@@ -1,4 +1,4 @@
-"""LLM and embedding instances — ported from AniRAG (trimmed: no Pinecone/Tavily/local models)."""
+"""LLM and embedding instances — OpenAI-compatible protocol layer (no Pinecone/Tavily/local models)."""
 import hashlib
 import json
 import logging
@@ -143,7 +143,7 @@ def _json_fallback_invoke(llm: ChatOpenAI, output_class: Type[T],
 
 
 # ══════════════════════════════════════════════════════════════════════
-# Ark Coding Plan Embeddings（移植自 AniRAG，含限流退避）
+# Ark Coding Plan Embeddings（含限流退避）
 # ══════════════════════════════════════════════════════════════════════
 
 class ArkCodingEmbeddings(Embeddings):
